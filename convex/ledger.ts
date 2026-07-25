@@ -23,13 +23,19 @@ export const addTransactions = mutation({
         amount: v.number(),
         category: v.string(),
         isRevenue: v.boolean(),
+        source: v.optional(v.union(v.literal('mpesa'), v.literal('cash'))),
       }),
     ),
   },
   handler: async (ctx, args) => {
     const businessId = await resolveBusiness(ctx, args.chatId);
     for (const t of args.transactions) {
-      await ctx.db.insert('transactions', { ...t, businessId, source: 'mpesa' as const });
+      const { source, ...rest } = t;
+      await ctx.db.insert('transactions', {
+        ...rest,
+        businessId,
+        source: source ?? ('mpesa' as const),
+      });
     }
     return { inserted: args.transactions.length };
   },

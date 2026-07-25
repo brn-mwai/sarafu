@@ -27,9 +27,14 @@ How to talk:
 
 What you do:
 - When she pastes an M-Pesa statement, call parse_statement. Never try to read it yourself and never summarise it without parsing.
-- When she tells you a cash figure for a day ("cash today 3400", "leo 2800", "made 5k cash"), call log_cash. Take the number and move on. Do not ask what it was for.
+- When she describes transactions in words, in English or Swahili, call log_entry. "Nimenunua unga 4,500, nimeuza leo 8,200, nililipa helper 600" is three separate entries: stock out 4,500, sale in 8,200, wages out 600. This is how most entries arrive. She speaks, she does not export.
+- When she gives only a cash total for a day ("cash today 3400", "leo 2800"), call log_cash. Take the number and move on. Do not ask what it was for.
 - When she asks how the business is doing, call get_summary.
+- When she asks for a report, or something to show a lender, a bank or her chama, call generate_report and write it up.
 - When she asks about tax, KRA, or what she owes, call get_tax_position.
+
+Why the records matter, if she asks:
+KRA now checks declared sales against electronic records, and it can raise its own assessment when a business cannot produce them. A business with no records does not avoid tax, it gets estimated. Say that once, plainly, and only if it is relevant. Never use it as a threat and never moralise about compliance.
 
 Rules you never break:
 - Never invent a number. If you do not have the data, say what is missing and how to give it to you.
@@ -85,6 +90,42 @@ export const TOOLS = [
         periodEnd: { type: 'string', description: 'ISO date of latest transaction.' },
       },
       required: ['transactions', 'periodStart', 'periodEnd'],
+    },
+  },
+  {
+    name: 'log_entry',
+    description:
+      'Record transactions the owner describes in her own words, in English or Swahili, rather than pasting a statement. Use this for sentences like "Nimenunua unga 4,500, nimeuza leo 8,200, nililipa helper 600" or "bought stock for 3000 and sold 7500 today". Split the sentence into separate transactions, one per amount mentioned. This is how most entries will arrive: she speaks, she does not export.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        entries: {
+          type: 'array',
+          description: 'One entry per amount she mentioned.',
+          items: {
+            type: 'object',
+            properties: {
+              date: { type: 'string', description: 'ISO date. Use today unless she names a day.' },
+              description: {
+                type: 'string',
+                description:
+                  'What it was, in her words, translated to English if she wrote Swahili. Example: "unga stock", "helper wages".',
+              },
+              direction: { type: 'string', enum: ['in', 'out'] },
+              amount: { type: 'number', description: 'Positive number, KES.' },
+              category: { type: 'string', enum: CATEGORY_VALUES },
+              isRevenue: { type: 'boolean', description: 'True only for money earned from selling.' },
+              paidInCash: {
+                type: 'boolean',
+                description:
+                  'True if the money moved as physical cash rather than M-Pesa. If she does not say, assume cash for sales she describes verbally.',
+              },
+            },
+            required: ['date', 'description', 'direction', 'amount', 'category', 'isRevenue', 'paidInCash'],
+          },
+        },
+      },
+      required: ['entries'],
     },
   },
   {

@@ -115,9 +115,34 @@ The insight tying it together: **compliance is a by-product of visibility, not a
 
 ## 4. Why now
 
-- **eTIMS is closing in.** The KES 5 million exemption is under active pressure from KRA, and guidance is drifting toward all businesses issuing electronic receipts regardless of turnover. Millions of businesses are about to need a transaction record they currently do not keep.
-- **Statement access got easy.** M-Pesa statements are self-service via the app and *334#. The data already exists in the owner's pocket. Nobody has been turning it into a ledger.
-- **Parsing stopped being the hard part.** Messy, inconsistent, semi-structured statement text used to require a bespoke parser per format. A frontier model reads it directly. The engineering cost of the wedge collapsed in the last 18 months.
+### The Finance Act 2026 did not give SMEs relief. It raised the price of having no records.
+
+This is the single most important thing happening to this market, and it is easy to misread. The Act introduced no sweeping SME tax relief, no bookkeeping incentive, no simplified filing. What it did instead:
+
+1. **KRA can originate its own assessments.** If a business cannot produce records, KRA is no longer limited to auditing what she self-declared. It can estimate her liability and assess her on that estimate. **A business with no books does not avoid tax. It gets estimated.**
+2. **Declared sales are matched against electronic records.** eTIMS and e-invoicing data are increasingly cross-checked against returns, and automated validation of expense claims began in January 2026. Expenses unsupported by electronic invoices are disallowed.
+3. **Penalties acquired a floor.** A minimum penalty of KES 10,000 for individuals, KES 100,000 otherwise, for failures including not issuing an eTIMS invoice or not filing electronically.
+
+The consequence for the owner in Section 1 is direct: the cost of her missing records just moved from *invisible* to *quantified and enforced*. She is not being asked to keep books because it is good practice. She is being assessed as though she had them.
+
+**The Finance Act 2026 is the best thing that has happened to this product**, and not because compliance is a market. Because it converts bookkeeping from a chore with no deadline into an obligation with a penalty, for millions of businesses that have no way to comply. Regulation created the demand; nobody has built the supply.
+
+### The other two reasons
+
+- **Statement access got easy.** M-Pesa statements are self-service via the app and `*334#`. The data already exists in the owner's pocket. Nobody has been turning it into a ledger.
+- **Parsing stopped being the hard part.** Messy, semi-structured statement text used to need a bespoke parser per format. A frontier model reads it directly, and it reads spoken Swahili just as well. The engineering cost of this wedge collapsed in the last 18 months.
+
+### What this changes about the product
+
+The target is not "an accounting app with a nicer dashboard". Those exist. The target is **the bridge between how an informal business actually behaves and what KRA now expects to see.**
+
+Concretely: she types, in Swahili, into a chat.
+
+> *"Nimenunua unga 4,500. Nimeuza leo 8,200. Nililipa helper 600."*
+
+Sarafu splits that into three classified transactions, updates the ledger, tells her she made KES 3,100 today, and keeps a record that can be reconciled against eTIMS when she needs it. She did not open an app, learn a category system, or know what a ledger is.
+
+**That sentence is the product.** Everything else is reporting on top of it.
 
 ## 5. How it works
 

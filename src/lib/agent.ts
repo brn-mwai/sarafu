@@ -41,6 +41,42 @@ async function runTool(
     };
   }
 
+  if (name === 'log_entry') {
+    const transactions = input.entries.map((e: any) => ({
+      date: e.date,
+      counterparty: e.description,
+      direction: e.direction,
+      amount: e.amount,
+      category: e.category,
+      isRevenue: e.isRevenue,
+      source: e.paidInCash ? ('cash' as const) : ('mpesa' as const),
+    }));
+
+    const { inserted } = await convex.mutation(api.ledger.addTransactions, {
+      chatId,
+      transactions,
+    });
+
+    const inTotal = transactions
+      .filter((t: any) => t.direction === 'in')
+      .reduce((s: number, t: any) => s + t.amount, 0);
+    const outTotal = transactions
+      .filter((t: any) => t.direction === 'out')
+      .reduce((s: number, t: any) => s + t.amount, 0);
+
+    return {
+      recorded: inserted,
+      moneyIn: kes(inTotal),
+      moneyOut: kes(outTotal),
+      todaysMargin: inTotal > 0 ? kes(inTotal - outTotal) : 'No sales in this entry',
+      lines: transactions.map(
+        (t: any) => `${t.counterparty}: ${t.direction === 'in' ? '+' : '-'}${kes(t.amount)} (${t.category})`,
+      ),
+      instruction:
+        'Confirm back in one short line what you recorded and the resulting profit for that day. Do not restate every line unless she asks.',
+    };
+  }
+
   if (name === 'log_cash') {
     const res = await convex.mutation(api.ledger.logCash, {
       chatId,
