@@ -1,65 +1,99 @@
-import Image from "next/image";
+import { VStack, HStack } from '@astryxdesign/core/Layout';
+import { Heading, Text } from '@astryxdesign/core/Text';
+import { Card } from '@astryxdesign/core/Card';
+import { Link } from '@astryxdesign/core/Link';
+import { Grid } from '@astryxdesign/core/Grid';
+import { Divider } from '@astryxdesign/core/Divider';
+
+const STATS = [
+  { value: '5.85M', label: 'unlicensed MSMEs in Kenya, with no books at all' },
+  { value: '60-70%', label: 'fail within three years, poor records a leading cause' },
+  { value: 'USD 19.3B', label: 'MSME financing gap they cannot reach without records' },
+];
+
+const STEPS = [
+  {
+    title: 'Paste your M-Pesa statement',
+    body: 'Into Telegram. No paybill, no till, no API, no accountant. Claude reads it and gives every line a business meaning.',
+  },
+  {
+    title: 'Send one cash number a day',
+    body: 'Not one entry per sale. Just "cash today 3400". Cash is the half of an informal business nobody else can see.',
+  },
+  {
+    title: 'Ask how you are doing',
+    body: 'Sales, costs, margin, top customers. Then ask what you owe KRA, and get a report you can forward to a lender.',
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <VStack gap={8} padding={6} maxWidth={960} hAlign="stretch">
+      <VStack gap={3}>
+        <Heading level={1} type="display-2">
+          Sarafu
+        </Heading>
+        <Text type="supporting" color="secondary">
+          AI Mashinani 2026 &middot; Biashara track
+        </Text>
+        <Heading level={2}>
+          Financial visibility for the 5.85 million Kenyan businesses that have no books.
+        </Heading>
+        <Text>
+          A shopkeeper knows money came in today. She cannot tell you whether she made a profit this
+          month. Sarafu is a bookkeeper she talks to on Telegram.
+        </Text>
+      </VStack>
+
+      <Grid columns={{ minWidth: 240 }} gap={3}>
+        {STATS.map((s) => (
+          <Card key={s.label} padding={4}>
+            <VStack gap={1}>
+              <Heading level={3} type="display-3">
+                {s.value}
+              </Heading>
+              <Text type="supporting" color="secondary">
+                {s.label}
+              </Text>
+            </VStack>
+          </Card>
+        ))}
+      </Grid>
+
+      <Divider />
+
+      <VStack gap={4}>
+        <Heading level={2}>How it works</Heading>
+        <Grid columns={{ minWidth: 260 }} gap={3}>
+          {STEPS.map((s, i) => (
+            <Card key={s.title} padding={4}>
+              <VStack gap={2}>
+                <Text type="supporting" color="secondary">
+                  {String(i + 1).padStart(2, '0')}
+                </Text>
+                <Heading level={3}>{s.title}</Heading>
+                <Text>{s.body}</Text>
+              </VStack>
+            </Card>
+          ))}
+        </Grid>
+      </VStack>
+
+      <Divider />
+
+      <VStack gap={3}>
+        <Heading level={2}>Turnover tax, as a by-product</Heading>
+        <Text>
+          She does not want to do tax. She wants to know if she made money. Sarafu computes turnover
+          tax at 1.5% of gross sales, flags the KES 1,000,000 floor and the KES 25,000,000 ceiling,
+          counts down to the 20th, and warns her before she crosses the KES 5,000,000 line where VAT
+          and eTIMS obligations start.
+        </Text>
+        <HStack gap={4} wrap="wrap">
+          <Link href="/dashboard">Open the dashboard</Link>
+          <Link href="https://github.com/brn-mwai/sarafu">Source and proposal</Link>
+        </HStack>
+      </VStack>
+    </VStack>
   );
 }
