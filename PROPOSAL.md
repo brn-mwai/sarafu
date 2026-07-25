@@ -12,7 +12,7 @@ A Kenyan shopkeeper knows money came in today. She cannot tell you whether she m
 
 That is not a knowledge gap. It is a data gap. Her business runs on three ledgers that never meet:
 
-1. **M-Pesa**, on a personal line, where business receipts sit interleaved with school fees, fare and family transfers.
+1. **M-Pesa**, a flat list of money in and money out with no meaning attached. Nothing in it says which line was a sale and which was stock.
 2. **Cash**, which leaves no record at all.
 3. **Memory**, which is where margin, top customers and tax exposure actually live.
 
@@ -51,7 +51,7 @@ Explicitly **not** the target for v1: VAT-registered businesses with a finance t
 
 Three surfaces, one loop.
 
-**Import.** She pastes her M-Pesa statement as plain text. No PDF password, no API, no Daraja integration, no till number, no bank connection. Claude parses the raw statement into structured transactions and classifies each one: sale, stock purchase, supplier, transport, rent, wages, fees, personal. Business money is separated from personal money, which is the step no bank statement and no existing tool does for her.
+**Import.** She pastes her M-Pesa statement as plain text. No PDF password, no API, no Daraja integration, no till number, no bank connection. Claude parses the raw statement into structured transactions and gives every line a business meaning: sale, stock purchase, supplier, transport, rent, utilities, wages, fees. That classification step is the whole product. A statement tells her money moved. A ledger tells her whether she is making money, and only one of those is a business record.
 
 **Dashboard.** Revenue, expenses, gross margin, cash position, top customers, best and worst days. Plus manual cash entry, because a purely M-Pesa view of an informal business is a lie by omission. Cash sales sit in the same ledger as M-Pesa sales and the totals are honest.
 
@@ -72,7 +72,7 @@ M-Pesa statement text
         |
         v
   Claude Sonnet 5  (forced tool call, strict JSON schema)
-        |  normalise + classify + split business vs personal
+        |  normalise + classify every line into a business category
         v
    Transaction ledger  <---- manual cash entry
         |
@@ -91,7 +91,7 @@ Not the parsing. That is a prompt, and a competitor can copy it in a week.
 
 What compounds:
 
-1. **The classification ground truth.** Every correction an owner makes ("that MPESA transfer was stock, not personal") is a labelled example. Kenyan counterparty names, till numbers and supplier patterns are a dataset that only accumulates from real usage.
+1. **The classification ground truth.** Every correction an owner makes ("that payment was stock, not transport") is a labelled example. Kenyan counterparty names, till numbers and supplier patterns are a dataset that only accumulates from real usage.
 2. **The cash layer.** Competitors read M-Pesa because M-Pesa has an API. Cash has no API, so it gets ignored, so their picture of an informal business is structurally incomplete. Capturing cash is unglamorous and it is the moat.
 3. **The credit position.** A business with 12 months of verified, categorised cashflow in Sarafu is underwritable. That is the entry point into the USD 19.3 billion gap, and it is only reachable by whoever holds the ledger.
 

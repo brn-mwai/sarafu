@@ -10,7 +10,6 @@ export type TxnCategory =
   | 'utilities'
   | 'wages'
   | 'fees'
-  | 'personal'
   | 'transfer'
   | 'other';
 
@@ -39,7 +38,6 @@ export const CATEGORY_LABEL: Record<TxnCategory, string> = {
   utilities: 'Utilities',
   wages: 'Wages',
   fees: 'Bank / M-Pesa fees',
-  personal: 'Personal / drawings',
   transfer: 'Internal transfer',
   other: 'Uncategorised',
 };

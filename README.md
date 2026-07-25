@@ -2,7 +2,7 @@
 
 **Financial visibility for the 5.85 million Kenyan businesses that have no books.**
 
-Paste an M-Pesa statement. Claude parses it into a real ledger, separates business money from personal, folds in the cash you entered by hand, and turns the whole thing into a dashboard and a turnover tax figure.
+Paste an M-Pesa statement. Claude parses it into a real ledger, gives every line a business meaning, folds in the cash you entered by hand, and turns the whole thing into a dashboard and a turnover tax figure.
 
 Built for AI Mashinani 2026, Biashara track.
 
@@ -14,7 +14,7 @@ A Kenyan shopkeeper knows money came in today. She cannot tell you whether she m
 
 Her business runs on three ledgers that never meet:
 
-1. **M-Pesa**, on a personal line, where business receipts sit interleaved with school fees, fare and family transfers.
+1. **M-Pesa**, a flat list of money in and money out with no meaning attached. Nothing in it says which line was a sale and which was stock.
 2. **Cash**, which leaves no record at all.
 3. **Memory**, which is where margin, top customers and tax exposure actually live.
 
@@ -48,7 +48,7 @@ M-Pesa statement text  (pasted, no integration)
         |
         v
   Claude Sonnet 5   forced tool call, strict JSON schema
-        |   normalise + classify + split business from personal
+        |   normalise + classify every line into a business category
         v
    Transaction ledger  <----  manual cash entry
         |
