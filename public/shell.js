@@ -16,12 +16,19 @@
         return '<a href="/' + n[1] + '"' + (n[0] === page ? ' class="on"' : '') + '>' +
           '<svg class="ph sm"><use href="#' + n[2] + '"/></svg>' + n[3] + '</a>';
       }).join('') +
+      '<a href="/lender.html"' + (page === 'lender' ? ' class="on"' : '') + '><svg class="ph sm"><use href="#i-file"/></svg>Lender view</a>' +
       '<a href="/app.html"><svg class="ph sm"><use href="#i-chat"/></svg>Sarafu on phone</a>' +
       '</div>' +
       '<div class="bizcard"><div class="n">Wanjiku General Store</div><div class="l">Gikomba, Nairobi</div>' +
-      '<div class="p">8 months of records<br>Sarafu score 65</div></div>';
+      '<div class="p" id="shellMeta">8 months of records</div></div>';
 
     var shell = document.querySelector('.shell');
     shell.insertBefore(aside, shell.firstChild);
+
+    if (window.SARAFU && window.SARAFU_CREDIT) {
+      var a = SARAFU_CREDIT.match(SARAFU.derive()).assessment;
+      var meta = document.getElementById('shellMeta');
+      if (meta) meta.innerHTML = a.monthsOfRecords + ' months of records<br>Sarafu score ' + a.score;
+    }
   });
 })();

@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Underwriting file &middot; Sarafu for Lenders</title>
+<meta name="theme-color" content="#00FF01">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/shell.css">
+<style>
+  .banner { background: var(--ink); color: #fff; border-radius: 14px; padding: 16px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .banner .t { font-size: 15px; font-weight: 650; }
+  .banner .s { font-size: 12.5px; color: rgba(255,255,255,.7); margin-top: 3px; max-width: 70ch; line-height: 1.5; }
+  .verdict { margin-left: auto; text-align: right; }
+  .verdict .amt { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; color: var(--green); }
+  .verdict .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: rgba(255,255,255,.6); font-weight: 650; }
+  .prov { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 650; padding: 3px 8px; border-radius: 999px; }
+  .prov.v { background: var(--green); color: var(--ink); }
+  .prov.d { background: var(--wash); color: var(--muted); }
+  .flag { display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+  .flag:last-child { border-bottom: 0; }
+  .flag .dot { width: 9px; height: 9px; border-radius: 50%; margin-top: 5px; flex: none; }
+  .flag.ok .dot { background: var(--green); }
+  .flag.warn .dot { background: #E8A33D; }
+  .flag .t { font-size: 13.5px; font-weight: 570; }
+  .flag .s { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.45; }
+</style>
+</head>
+<body data-page="lender">
+<div class="shell">
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>Underwriting file</h1>
+        <div class="sub" id="period"></div>
+      </div>
+      <div class="actions">
+        <button onclick="location.href='/capital.html'"><svg class="ph sm"><use href="#i-coins"/></svg>Borrower view</button>
+        <button class="dark"><svg class="ph sm"><use href="#i-file"/></svg>Export PDF</button>
+      </div>
+    </div>
+
+    <div class="banner">
+      <div>
+        <div class="t">Wanjiku General Store &middot; Gikomba, Nairobi</div>
+        <div class="s">General retail. Sole proprietor. Assessed from <span id="bTx"></span> digitally verified transactions across <span id="bMonths"></span> months. No self-reported figures are used in the recommendation.</div>
+      </div>
+      <div class="verdict">
+        <div class="lbl">Recommended facility</div>
+        <div class="amt" id="bFacility"></div>
+      </div>
+    </div>
+
+    <section>
+      <div class="kpis">
+        <div class="card"><div class="k">Verified turnover</div><div class="v" id="uTurnover"></div><div class="n">annualised</div></div>
+        <div class="card"><div class="k">Monthly surplus</div><div class="v" id="uSurplus"></div><div class="n">after recorded costs</div></div>
+        <div class="card"><div class="k">Sarafu score</div><div class="v" id="uScore"></div><div class="n" id="uBand"></div></div>
+        <div class="card"><div class="k">Volatility</div><div class="v" id="uVol"></div><div class="n">month on month</div></div>
+        <div class="card ink"><div class="k">Est. DSCR</div><div class="v" id="uDscr"></div><div class="n" id="uDscrNote"></div></div>
+      </div>
+    </section>
+
+    <section class="cols">
+      <div class="card">
+        <h2><svg class="ph sm"><use href="#i-chart"/></svg>Verified monthly turnover</h2>
+        <div class="chart" id="hChart"></div>
+        <div class="axis"><span id="hFrom"></span><span id="hTo"></span></div>
+        <div class="n" style="margin-top:9px">Every bar is reconstructed from M-Pesa and till records, not from a declaration. Trend and volatility below are computed from this series.</div>
+      </div>
+      <div class="card">
+        <h2><svg class="ph sm"><use href="#i-shield"/></svg>Risk flags</h2>
+        <div id="flags"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2><svg class="ph sm"><use href="#i-file"/></svg>Data provenance</h2>
+      <div class="card">
+        <table>
+          <thead><tr><th>Field</th><th>Value</th><th>Source</th><th>Basis</th></tr></thead>
+          <tbody id="provBody"></tbody>
+        </table>
+        <div class="n" style="margin-top:12px">Sarafu does not lend, does not price, and is not a credit reference bureau. This file is decision support. The lender makes the decision.</div>
+      </div>
+    </section>
+
+    <section>
+      <h2><svg class="ph sm"><use href="#i-coins"/></svg>Affordability at a glance</h2>
+      <div class="cols3">
+        <div class="card"><div class="k">12 month facility</div><div class="v" id="f12"></div><div class="n" id="f12n"></div></div>
+        <div class="card"><div class="k">24 month facility</div><div class="v" id="f24"></div><div class="n" id="f24n"></div></div>
+        <div class="card warn"><div class="k">Ceiling before DSCR breaks</div><div class="v" id="fMax"></div><div class="n">Monthly repayment above this exceeds recorded surplus at 1.25x cover.</div></div>
+      </div>
+    </section>
+
+    <div class="foot">
+      Assessment generated from a structured transaction ledger built by the borrower's own use of Sarafu. Figures are indicative decision support, not a credit decision, a price, or a bureau record.
+    </div>
+  </main>
+</div>
+
+<script src="/shell.js"></script>
+<script src="/ledger-data.js"></script>
+<script src="/credit.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var d = SARAFU.derive(), kes = SARAFU.kes, short = SARAFU.short;
+  var m = SARAFU_CREDIT.match(d), a = m.assessment;
+  var el = function (id) { return document.getElementById(id); };
+
+  var monthlySurplus = d.profit;
+  var sales = a.months.map(function (x) { return x.sales; });
+  var mean = sales.reduce(function (s, x) { return s + x; }, 0) / sales.length;
+  var sd = Math.sqrt(sales.map(function (x) { return (x - mean) * (x - mean); }).reduce(function (s, x) { return s + x; }, 0) / sales.length);
+  var vol = sd / mean;
+
+  var cover = 1.25;
+  var affordable = monthlySurplus / cover;
+  var f12 = Math.round(affordable * 12 / 5000) * 5000;
+  var f24 = Math.round(affordable * 24 / 5000) * 5000;
+  var facility = Math.min(f12, m.headroom > 0 ? Math.max(m.headroom, f12) : f12);
+
+  el('period').textContent = 'Generated ' + new Date().toISOString().slice(0, 10) + '  ·  reference SRF-2026-0619  ·  consent on file';
+  el('bTx').textContent = SARAFU.txns.length;
+  el('bMonths').textContent = a.monthsOfRecords;
+  el('bFacility').textContent = kes(f12);
+
+  el('uTurnover').textContent = kes(a.avgMonthly * 12);
+  el('uSurplus').textContent = kes(monthlySurplus);
+  el('uScore').textContent = a.score;
+  el('uBand').textContent = a.band;
+  el('uVol').textContent = (vol * 100).toFixed(1) + '%';
+  el('uDscr').textContent = (monthlySurplus / (f12 / 12)).toFixed(2) + 'x';
+  el('uDscrNote').textContent = 'at ' + kes(f12) + ' over 12 months';
+
+  var mx = Math.max.apply(null, sales);
+  el('hChart').innerHTML = a.months.map(function (x) {
+    return '<div class="bar" title="' + x.label + ': ' + kes(x.sales) + '"><i style="height:' + (x.sales / mx * 100) + '%"></i></div>';
+  }).join('');
+  el('hFrom').textContent = a.months[0].label;
+  el('hTo').textContent = a.months[a.months.length - 1].label;
+
+  var flags = [
+    { ok: a.monthsOfRecords >= 6, t: a.monthsOfRecords + ' months of continuous records', s: a.monthsOfRecords >= 6 ? 'Meets the six month minimum most lenders apply to a first facility.' : 'Below the six month minimum most lenders apply.' },
+    { ok: vol < 0.2, t: 'Turnover volatility ' + (vol * 100).toFixed(1) + '%', s: vol < 0.2 ? 'Stable month to month. No single month drives the average.' : 'Variable month to month. Size the facility against the weakest month, not the mean.' },
+    { ok: a.topShare < 0.25, t: 'Top customer is ' + Math.round(a.topShare * 100) + '% of sales', s: a.topShare < 0.25 ? 'Well spread. No single counterparty failure would break repayment.' : 'Concentrated. Losing one counterparty would materially change capacity.' },
+    { ok: a.growth > 0.5, t: 'Turnover trend', s: a.growth > 0.5 ? 'Growing across the observed period.' : 'Flat or declining across the observed period.' },
+    { ok: false, t: 'No external credit history', s: 'Not CRB listed and no prior formal facility observed. This is a thin file by bureau standards, which is the reason this assessment exists.' },
+    { ok: a.profile.businessPermit, t: 'County business permit', s: a.profile.businessPermit ? 'On file.' : 'Not on file. Required by some bank products, not by mobile lenders.' }
+  ];
+  el('flags').innerHTML = flags.map(function (f) {
+    return '<div class="flag ' + (f.ok ? 'ok' : 'warn') + '"><div class="dot"></div><div><div class="t">' + f.t + '</div><div class="s">' + f.s + '</div></div></div>';
+  }).join('');
+
+  var prov = [
+    ['Turnover', kes(a.avgMonthly * 12), 'verified', 'M-Pesa and till records, ' + SARAFU.txns.length + ' transactions'],
+    ['Costs', kes(d.costs) + ' / month', 'verified', 'Outgoing payments classified by category'],
+    ['Surplus', kes(monthlySurplus) + ' / month', 'derived', 'Turnover less recorded costs'],
+    ['Record depth', a.monthsOfRecords + ' months', 'verified', 'Continuous statement coverage'],
+    ['Customer spread', Math.round(a.topShare * 100) + '% top counterparty', 'verified', 'Counterparty analysis of inbound payments'],
+    ['Business permit', a.profile.businessPermit ? 'Held' : 'Not held', 'declared', 'Owner stated, not independently checked'],
+    ['KRA PIN', a.profile.kraPin ? 'Held' : 'Not held', 'declared', 'Owner stated, not independently checked']
+  ];
+  el('provBody').innerHTML = prov.map(function (r) {
+    var badge = r[2] === 'verified'
+      ? '<span class="prov v">Verified</span>'
+      : r[2] === 'derived' ? '<span class="prov d">Derived</span>' : '<span class="prov d">Declared</span>';
+    return '<tr><td><strong>' + r[0] + '</strong></td><td>' + r[1] + '</td><td>' + badge + '</td><td class="n" style="margin:0">' + r[3] + '</td></tr>';
+  }).join('');
+
+  el('f12').textContent = kes(f12);
+  el('f12n').textContent = kes(Math.round(f12 / 12)) + ' a month';
+  el('f24').textContent = kes(f24);
+  el('f24n').textContent = kes(Math.round(f24 / 24)) + ' a month';
+  el('fMax').textContent = kes(Math.round(affordable));
+});
+</script>
+</body>
+</html>

@@ -8,7 +8,7 @@ var SARAFU = (function () {
 
   var CAT_LABEL = {
     sale: 'Sale',
-    cash_sale: 'Cash sale',
+    till_sale: 'Till payment',
     stock_purchase: 'Stock purchase',
     transport: 'Transport',
     rent: 'Rent',
@@ -17,11 +17,13 @@ var SARAFU = (function () {
     fees: 'M-Pesa charges'
   };
 
+  /* [day, mpesa in, till/paybill in] — every figure is digital and verifiable.
+     Nothing here depends on the owner recording anything by hand. */
   var SEED = [
     [4, 6400, 4900], [5, 5200, 3800], [6, 7800, 6100], [7, 4600, 3400], [8, 6100, 4700],
-    [9, 7400, 5800], [10, 5300, 0], [11, 6800, 4400], [12, 8100, 6600], [13, 5100, 3900],
-    [14, 6300, 5200], [15, 7100, 0], [16, 4800, 3600], [17, 6600, 5300], [18, 7600, 6200],
-    [19, 5000, 4100], [20, 6900, 5500], [21, 8300, 6900], [22, 5600, 0], [23, 6400, 4800],
+    [9, 7400, 5800], [10, 5300, 4200], [11, 6800, 4400], [12, 8100, 6600], [13, 5100, 3900],
+    [14, 6300, 5200], [15, 7100, 5600], [16, 4800, 3600], [17, 6600, 5300], [18, 7600, 6200],
+    [19, 5000, 4100], [20, 6900, 5500], [21, 8300, 6900], [22, 5600, 4400], [23, 6400, 4800],
     [24, 5900, 4300], [25, 7200, 5900], [26, 6100, 4700]
   ];
 
@@ -43,7 +45,7 @@ var SARAFU = (function () {
 
     if (cash > 0) {
       cashDays[date] = cash;
-      txns.push({ date: date, who: 'Cash sales', cat: 'cash_sale', label: 'Entered by you', dir: 'in', amt: cash, rev: true, src: 'cash' });
+      txns.push({ date: date, who: 'TILL 8842190', cat: 'till_sale', label: 'Lipa na M-Pesa', dir: 'in', amt: cash, rev: true, src: 'till' });
     }
 
     if (i % 3 === 0) {
@@ -53,7 +55,7 @@ var SARAFU = (function () {
     if (i % 4 === 1) txns.push({ date: date, who: 'BODA DELIVERY', cat: 'transport', label: 'Transport', dir: 'out', amt: 300 + (i % 3) * 150, rev: false, src: 'mpesa' });
     if (i % 6 === 2) txns.push({ date: date, who: 'KPLC TOKENS', cat: 'utilities', label: 'Utilities', dir: 'out', amt: 1000, rev: false, src: 'mpesa' });
     if (day === 5) txns.push({ date: date, who: 'STALL RENT', cat: 'rent', label: 'Rent', dir: 'out', amt: 15000, rev: false, src: 'mpesa' });
-    if (i % 7 === 3) txns.push({ date: date, who: 'HELPER', cat: 'wages', label: 'Wages', dir: 'out', amt: 600, rev: false, src: 'cash' });
+    if (i % 7 === 3) txns.push({ date: date, who: 'HELPER', cat: 'wages', label: 'Wages', dir: 'out', amt: 600, rev: false, src: 'mpesa' });
     if (i % 5 === 4) txns.push({ date: date, who: 'M-PESA CHARGES', cat: 'fees', label: 'Transaction fees', dir: 'out', amt: 120 + (i % 4) * 30, rev: false, src: 'mpesa' });
   });
 
@@ -65,7 +67,7 @@ var SARAFU = (function () {
 
     txns.forEach(function (t) {
       if (t.dir === 'in' && t.rev) {
-        if (t.src === 'cash') { cashSales += t.amt; }
+        if (t.src === 'till') { cashSales += t.amt; }
         else {
           mpesaSales += t.amt;
           byCust[t.who] = byCust[t.who] || { total: 0, n: 0 };
