@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sarafu Proposal</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 16mm 16mm; }
+
+  :root {
+    --ink: #14161a;
+    --ink-soft: #4a5058;
+    --ink-faint: #767d87;
+    --rule: #dfe3e8;
+    --rule-soft: #eef1f4;
+    --accent: #0a6b4a;
+    --accent-wash: #f2f8f5;
+    --warn-wash: #fdf6ee;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    margin: 0;
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    font-size: 10.2pt;
+    line-height: 1.58;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1, h2, h3 { line-height: 1.2; margin: 0; font-weight: 650; letter-spacing: -0.011em; }
+
+  h2 {
+    font-size: 13.5pt;
+    margin: 22pt 0 8pt;
+    padding-top: 9pt;
+    border-top: 1px solid var(--rule);
+    break-after: avoid;
+  }
+  h2 .num { color: var(--accent); font-variant-numeric: tabular-nums; margin-right: 7pt; }
+
+  h3 {
+    font-size: 10.6pt;
+    margin: 14pt 0 5pt;
+    color: var(--ink);
+    break-after: avoid;
+  }
+
+  p { margin: 0 0 8pt; }
+  strong { font-weight: 640; }
+  a { color: var(--accent); text-decoration: none; }
+
+  /* ---------- cover ---------- */
+  .cover { break-after: page; padding-top: 34mm; }
+
+  .wordmark {
+    font-size: 40pt;
+    font-weight: 680;
+    letter-spacing: -0.032em;
+    line-height: 1;
+    margin-bottom: 14pt;
+  }
+  .wordmark span { color: var(--accent); }
+
+  .promise {
+    font-size: 15pt;
+    line-height: 1.35;
+    font-weight: 480;
+    color: var(--ink);
+    max-width: 132mm;
+    letter-spacing: -0.012em;
+    margin-bottom: 20pt;
+  }
+
+  .cover-meta {
+    border-top: 2px solid var(--ink);
+    padding-top: 9pt;
+    display: flex;
+    gap: 26pt;
+    font-size: 8.6pt;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .cover-meta b { display: block; color: var(--ink); font-weight: 620; letter-spacing: 0.02em; margin-top: 2pt; text-transform: none; font-size: 9.6pt; }
+
+  .cover-stats {
+    margin-top: 42pt;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .cover-stats div { padding: 11pt 12pt 11pt 0; border-right: 1px solid var(--rule-soft); }
+  .cover-stats div:last-child { border-right: 0; }
+  .cover-stats .n { font-size: 19pt; font-weight: 660; letter-spacing: -0.025em; color: var(--accent); line-height: 1; }
+  .cover-stats .l { font-size: 8.4pt; color: var(--ink-soft); margin-top: 5pt; line-height: 1.35; }
+
+  /* ---------- pull quote ---------- */
+  .lede {
+    font-size: 12pt;
+    line-height: 1.45;
+    font-weight: 500;
+    color: var(--ink);
+    border-left: 2.5pt solid var(--accent);
+    padding: 2pt 0 2pt 12pt;
+    margin: 0 0 12pt;
+    letter-spacing: -0.008em;
+  }
+
+  ol.tight { margin: 0 0 10pt; padding-left: 15pt; }
+  ol.tight li, ul.tight li { margin-bottom: 4pt; }
+  ul.tight { margin: 0 0 10pt; padding-left: 15pt; }
+
+  /* ---------- tables ---------- */
+  table { width: 100%; border-collapse: collapse; margin: 4pt 0 12pt; font-size: 9.2pt; break-inside: avoid; }
+  th {
+    text-align: left;
+    font-weight: 620;
+    font-size: 7.9pt;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border-bottom: 1.2pt solid var(--ink);
+    padding: 0 8pt 5pt 0;
+  }
+  td { padding: 6pt 8pt 6pt 0; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+  td:last-child, th:last-child { padding-right: 0; }
+  .fig { font-weight: 640; color: var(--accent); white-space: nowrap; }
+  .src { color: var(--ink-faint); font-size: 8.4pt; }
+
+  /* ---------- callout ---------- */
+  .callout {
+    background: var(--accent-wash);
+    border-left: 2.5pt solid var(--accent);
+    padding: 9pt 12pt;
+    margin: 10pt 0 12pt;
+    font-size: 9.8pt;
+    break-inside: avoid;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ---------- flow diagram ---------- */
+  .flow {
+    border: 1px solid var(--rule);
+    border-radius: 3pt;
+    padding: 12pt 14pt;
+    margin: 8pt 0 12pt;
+    font-family: "JetBrains Mono", "Consolas", monospace;
+    font-size: 8.3pt;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    white-space: pre;
+    break-inside: avoid;
+    background: #fbfcfd;
+  }
+  .flow b { color: var(--accent); font-weight: 600; }
+
+  /* ---------- scope checklist ---------- */
+  .scope { list-style: none; padding: 0; margin: 4pt 0 10pt; font-size: 9.6pt; }
+  .scope li { padding: 3.5pt 0 3.5pt 17pt; position: relative; border-bottom: 1px solid var(--rule-soft); }
+  .scope li:before {
+    content: "";
+    position: absolute; left: 0; top: 7.5pt;
+    width: 8pt; height: 8pt;
+    border: 1.2pt solid var(--ink-faint);
+    border-radius: 1.5pt;
+  }
+  .scope li.done:before {
+    background: var(--accent); border-color: var(--accent);
+    content: "\2713"; color: #fff; font-size: 6.6pt; line-height: 8pt; text-align: center;
+  }
+
+  .cut { font-size: 9.2pt; color: var(--ink-soft); background: var(--warn-wash); padding: 8pt 11pt; border-radius: 3pt; break-inside: avoid; }
+
+  .sources { font-size: 8.5pt; color: var(--ink-soft); line-height: 1.65; }
+  .sources li { margin-bottom: 3pt; }
+
+  footer {
+    margin-top: 20pt; padding-top: 8pt;
+    border-top: 1px solid var(--rule);
+    font-size: 8pt; color: var(--ink-faint);
+    display: flex; justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="wordmark">Sarafu<span>.</span></div>
+
+  <div class="promise">
+    Financial visibility for the 5.85 million Kenyan businesses that have no books.
+  </div>
+
+  <div class="cover-meta">
+    <div>Event<b>AI Mashinani 2026</b></div>
+    <div>Track<b>Biashara</b></div>
+    <div>Status<b>Working prototype</b></div>
+  </div>
+
+  <div class="cover-stats">
+    <div><div class="n">5.85M</div><div class="l">unlicensed MSMEs in Kenya, with no books at all</div></div>
+    <div><div class="n">60&ndash;70%</div><div class="l">fail within three years, poor records a leading cause</div></div>
+    <div><div class="n">$19.3B</div><div class="l">MSME financing gap they cannot reach without records</div></div>
+  </div>
+</section>
+
+<h2><span class="num">01</span>The problem</h2>
+
+<p class="lede">A Kenyan shopkeeper knows money came in today. She cannot tell you whether she made a profit this month.</p>
+
+<p>That is not a knowledge gap. It is a data gap. Her business runs on three ledgers that never meet:</p>
+
+<ol class="tight">
+  <li><strong>M-Pesa</strong>, on a personal line, where business receipts sit interleaved with school fees, fare and family transfers.</li>
+  <li><strong>Cash</strong>, which leaves no record at all.</li>
+  <li><strong>Memory</strong>, which is where margin, top customers and tax exposure actually live.</li>
+</ol>
+
+<p>Nobody has ever put those three in one place for her, because every tool that exists assumes she already has what she does not have: a till number, a paybill, an accountant, or a formal registration.</p>
+
+<h3>The evidence</h3>
+
+<table>
+  <thead><tr><th style="width:48%">Fact</th><th style="width:27%">Figure</th><th style="width:25%">Source</th></tr></thead>
+  <tbody>
+    <tr><td>MSMEs in Kenya</td><td class="fig">7.41 million</td><td class="src">KNBS MSME Survey</td></tr>
+    <tr><td>Of which unlicensed, entirely informal</td><td class="fig">5.85 million</td><td class="src">Draft MSME Policy 2025</td></tr>
+    <tr><td>Share of all Kenyan businesses</td><td class="fig">98%</td><td class="src">FSD Kenya / IFC</td></tr>
+    <tr><td>Share of new jobs created in 2024</td><td class="fig">703k of 782k</td><td class="src">Economic Survey 2025</td></tr>
+    <tr><td>MSMEs that fail within three years</td><td class="fig">60 to 70%</td><td class="src">Ministry of Trade</td></tr>
+    <tr><td>SMEs collapsing annually, poor records a leading cause</td><td class="fig">400,000+</td><td class="src">KNBS</td></tr>
+    <tr><td>Kenyan MSME financing gap</td><td class="fig">USD 19.3 billion</td><td class="src">FSD Kenya</td></tr>
+    <tr><td>MSMEs with no access to credit</td><td class="fig">67.9%</td><td class="src">FSD Kenya, 2020</td></tr>
+    <tr><td>SME transactions touching M-Pesa</td><td class="fig">over 90%</td><td class="src">Industry estimate</td></tr>
+  </tbody>
+</table>
+
+<p>Read those together and the causal chain is not subtle. No records, so no visibility. No visibility, so pricing and stock decisions are guesses. No records, so no lender will underwrite her, which is a large part of a USD 19.3 billion gap. Then the business dies inside three years and gets counted in the 400,000.</p>
+
+<h3>Why the existing tools do not close it</h3>
+
+<p>Kenya has good accounting software. ZYNO Books, Qwan, Zoho Books Kenya edition and Auni all handle M-Pesa in some form. Every one of them is built for the business that is <strong>already formal</strong>: it has a paybill or till, a KRA PIN in active use, often a bookkeeper, and turnover that justifies a subscription and a setup process.</p>
+
+<div class="callout">
+  <p>That is roughly 1.56 million businesses. The other 5.85 million are not underserved by those products. They are <strong>out of scope</strong> for them.</p>
+  <p>The gap is not better accounting. It is a first ledger for a business that has never had one, with zero integration, zero registration and zero training as preconditions.</p>
+</div>
+
+<h2><span class="num">02</span>Who Sarafu is for</h2>
+
+<p>The owner-operator doing KES 50,000 to KES 4 million a year. A duka, a salon, a hardware stall, a boda fleet of three, a food kiosk, a small distributor. She runs the business from one phone. She banks on M-Pesa. She takes cash. She has no accountant and no paybill, and if she has a KRA PIN she has probably not thought about turnover tax.</p>
+
+<p>Explicitly <strong>not</strong> the target for v1: VAT-registered businesses with a finance team. They are already served.</p>
+
+<h2><span class="num">03</span>What Sarafu does</h2>
+
+<p>Three surfaces, one loop.</p>
+
+<h3>Import</h3>
+<p>She pastes her M-Pesa statement as plain text. No PDF password, no API, no Daraja integration, no till number, no bank connection. Claude parses the raw statement into structured transactions and classifies each one: sale, stock purchase, supplier, transport, rent, wages, fees, personal. Business money is separated from personal money, which is the step no bank statement and no existing tool does for her.</p>
+
+<h3>Dashboard</h3>
+<p>Revenue, expenses, gross margin, cash position, top customers, best and worst days. Plus manual cash entry, because a purely M-Pesa view of an informal business is a lie by omission. Cash sales sit in the same ledger as M-Pesa sales and the totals are honest.</p>
+
+<h3>Tax</h3>
+<p>The ledger is already the tax return. Sarafu computes turnover tax at 1.5% of gross sales, flags the KES 1,000,000 registration floor and the KES 25,000,000 ceiling, counts down to the 20th of the month, and warns her when she is approaching the KES 5,000,000 line where VAT and eTIMS obligations begin. Output is eTIMS-ready line items, not a lecture about compliance.</p>
+
+<div class="callout">
+  <p><strong>Compliance is a by-product of visibility, not a separate product.</strong> She does not want to do tax. She wants to know if she made money. Do the second properly and the first falls out of it for free.</p>
+</div>
+
+<h2><span class="num">04</span>Why now</h2>
+
+<ul class="tight">
+  <li><strong>eTIMS is closing in.</strong> The KES 5 million exemption is under active pressure from KRA, and guidance is drifting toward all businesses issuing electronic receipts regardless of turnover. Millions of businesses are about to need a transaction record they currently do not keep.</li>
+  <li><strong>Statement access got easy.</strong> M-Pesa statements are self-service via the app and *334#. The data already exists in the owner's pocket. Nobody has been turning it into a ledger.</li>
+  <li><strong>Parsing stopped being the hard part.</strong> Messy, semi-structured statement text used to need a bespoke parser per format. A frontier model reads it directly. The engineering cost of this wedge collapsed in the last 18 months.</li>
+</ul>
+
+<h2><span class="num">05</span>How it works</h2>
+
+<div class="flow">M-Pesa statement text  <span style="color:#767d87">(pasted, no integration)</span>
+        |
+        v
+  <b>Claude Sonnet 5</b>   forced tool call, strict JSON schema
+        |   normalise + classify + split business from personal
+        v
+   <b>Transaction ledger</b>  &lt;----  manual cash entry
+        |
+        +--&gt;  <b>Dashboard</b>   revenue, expenses, margin, top customers
+        |
+        +--&gt;  <b>Tax</b>         TOT at 1.5%, thresholds, eTIMS-ready lines</div>
+
+<p><strong>Stack.</strong> Next.js 16 App Router, Astryx for UI, Claude Sonnet 5 via the Anthropic API for parsing and classification, Vercel for hosting.</p>
+
+<p><strong>Sponsor technology, used and not name-dropped.</strong> Claude is the parser. There is no regex fallback and no hand-written statement grammar. The product does not function without the model, which is the honest test of whether an AI feature is real.</p>
+
+<h2><span class="num">06</span>What is defensible</h2>
+
+<p>Not the parsing. That is a prompt, and a competitor can copy it in a week. What compounds:</p>
+
+<table>
+  <thead><tr><th style="width:30%">Asset</th><th>Why it compounds</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Classification ground truth</strong></td><td>Every correction an owner makes, "that transfer was stock, not personal", is a labelled example. Kenyan counterparty names, till numbers and supplier patterns form a dataset that only accumulates from real usage.</td></tr>
+    <tr><td><strong>The cash layer</strong></td><td>Competitors read M-Pesa because M-Pesa has an API. Cash has no API, so it gets ignored, so their picture of an informal business is structurally incomplete. Capturing cash is unglamorous and it is the moat.</td></tr>
+    <tr><td><strong>The credit position</strong></td><td>A business with 12 months of verified, categorised cashflow is underwritable. That is the entry point into the USD 19.3 billion gap, and only whoever holds the ledger can reach it.</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="num">07</span>Business model</h2>
+
+<table>
+  <thead><tr><th style="width:22%">Tier</th><th style="width:22%">Price</th><th>What it buys</th></tr></thead>
+  <tbody>
+    <tr><td>Free</td><td class="fig">KES 0</td><td>Statement import, dashboard, cash entry. Land the ledger.</td></tr>
+    <tr><td>Paid</td><td class="fig">KES 300&ndash;500 / mo</td><td>Tax pack, eTIMS export, multi-month history, stock tracking.</td></tr>
+    <tr><td>Later</td><td class="fig">Rev share</td><td>Verified cashflow records as a lending rail, shared with lenders.</td></tr>
+  </tbody>
+</table>
+
+<p>The ledger is the asset. The subscription is how it stays alive until the lending rail is real.</p>
+
+<h2><span class="num">08</span>Hackathon scope</h2>
+
+<ul class="scope">
+  <li class="done">Problem statement grounded in cited data</li>
+  <li>Paste M-Pesa statement, parsed by Claude into a structured ledger</li>
+  <li>Dashboard: revenue, expenses, margin, top customers, trend</li>
+  <li>Manual cash entry folded into the same totals</li>
+  <li>Tax page: turnover tax at 1.5%, thresholds, filing countdown</li>
+  <li>Deployed to a public URL</li>
+</ul>
+
+<p class="cut"><strong>Deliberately cut, and named so the cut is visible:</strong> authentication, multi-user, PDF upload, stock, live eTIMS filing, M-Pesa Daraja integration. One path working beats four paths broken.</p>
+
+<h2><span class="num">09</span>Risks, stated plainly</h2>
+
+<table>
+  <thead><tr><th style="width:30%">Risk</th><th>Reality</th></tr></thead>
+  <tbody>
+    <tr><td>Statement format drift</td><td>Model-based parsing tolerates format changes better than a regex parser, but it is not free. Needs an eval set of real statements.</td></tr>
+    <tr><td>Classification errors</td><td>A misfiled transaction becomes a wrong tax figure. Mitigation is a visible one-tap correction path, and never showing a tax number as authoritative without owner review.</td></tr>
+    <tr><td>Cash entry is manual</td><td>If she does not enter cash, the picture is wrong. This is the core retention risk and the core product problem.</td></tr>
+    <tr><td>Willingness to pay</td><td>Informal businesses are price-sensitive. The free tier has to carry the value on its own, with tax as the upgrade trigger.</td></tr>
+    <tr><td>Incumbents move down-market</td><td>Zoho or ZYNO could target the informal segment. They would have to give up the paybill assumption, which is most of their architecture.</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="num">10</span>Sources</h2>
+
+<ul class="sources">
+  <li>Draft MSME Policy 2025, State Department for MSME Development. msme.go.ke</li>
+  <li>Kenya National Bureau of Statistics, Economic Survey 2025. knbs.or.ke</li>
+  <li>Kenya Revenue Authority, Turnover Tax. kra.go.ke</li>
+  <li>IFC, MSME Finance Gap, March 2025. smefinanceforum.org</li>
+  <li>Strathmore Business School, Kenya's MSMEs power 85% of new jobs. sbs.strathmore.edu</li>
+  <li>Techweez, KRA seeks end to KES 5M eTIMS exemption, April 2025. techweez.com</li>
+  <li>The Kenya Times, Why so many MSMEs fail to get bank loans in Kenya. thekenyatimes.com</li>
+</ul>
+
+<footer>
+  <span>Sarafu &middot; AI Mashinani 2026 &middot; Biashara track</span>
+  <span>Turnover tax figures per KRA, 1.5% on gross sales, KES 1M to 25M band</span>
+</footer>
+
+</body>
+</html>
