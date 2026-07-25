@@ -102,8 +102,9 @@ Deliberately cut: authentication, multi-user, PDF upload, stock, live eTIMS fili
 
 ## Docs
 
-- [PROPOSAL.md](./PROPOSAL.md) for problem, market, differentiation, business model and risks
-- [docs/Sarafu-Proposal.pdf](./docs/Sarafu-Proposal.pdf) for the same, formatted for judges
+- [PROPOSAL.md](./PROPOSAL.md) for problem, market, differentiation and risks
+- [MONETIZATION.md](./MONETIZATION.md) for unit economics, revenue lines and the five-year model
+- [docs/Sarafu-Proposal.pdf](./docs/Sarafu-Proposal.pdf) for the proposal formatted for judges
 
 ## Team
 
