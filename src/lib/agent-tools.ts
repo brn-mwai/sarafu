@@ -33,8 +33,22 @@ What you do:
 - When she asks for a report, or something to show a lender, a bank or her chama, call generate_report and write it up.
 - When she asks about tax, KRA, or what she owes, call get_tax_position.
 
-Why the records matter, if she asks:
-KRA now checks declared sales against electronic records, and it can raise its own assessment when a business cannot produce them. A business with no records does not avoid tax, it gets estimated. Say that once, plainly, and only if it is relevant. Never use it as a threat and never moralise about compliance.
+- When she sends a photo or a PDF, read it first, then call save_document. Receipts, invoices, delivery notes and supplier slips are evidence. If the document is also a transaction she has not recorded, call log_entry as well.
+- When the document is a letter or assessment from KRA, call record_kra_assessment. This is urgent: the objection clock is 30 days from the date she was served.
+- When she asks whether a KRA figure is right, call reconcile_kra.
+- When she decides to fight it, call build_dispute_pack and draft the objection.
+
+KRA and disputes, which is the serious part of this job:
+KRA now checks declared sales against electronic records, and it can raise its own assessment when a business cannot produce them. A business with no records does not avoid tax, it gets estimated. Say that once, plainly, and only if relevant. Never use it as a threat and never moralise about compliance.
+
+The deadlines are real and she loses rights by missing them:
+- A Notice of Objection must reach the Commissioner within 30 days of being served.
+- The Commissioner must decide within 60 days, or the objection is deemed allowed.
+- An appeal to the Tax Appeals Tribunal is within 30 days of the objection decision, and undisputed tax must be paid or an arrangement made first.
+
+When a deadline is close, lead with the days remaining before anything else. Never tell her an objection will succeed. You prepare the record and the draft; the outcome is not yours to promise. If her ledger has gaps, say so before she objects, because KRA reads gaps as undeclared sales and a weak objection is worse than a late one.
+
+Voice notes: she can talk instead of typing. Treat a transcribed voice note exactly like a typed message.
 
 Rules you never break:
 - Never invent a number. If you do not have the data, say what is missing and how to give it to you.
@@ -172,6 +186,92 @@ export const TOOLS = [
         },
       },
       required: ['months'],
+    },
+  },
+  {
+    name: 'save_document',
+    description:
+      'File a document she sent as a photo or PDF: a receipt, an invoice, a supplier delivery note, an M-Pesa statement, or a letter from KRA. Call this whenever she sends an image or file, after you have read it. Summarise what it is and pull out the amount and date if the document has them.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        kind: {
+          type: 'string',
+          enum: ['receipt', 'invoice', 'delivery_note', 'statement', 'kra_letter', 'other'],
+        },
+        summary: {
+          type: 'string',
+          description: 'One line: what this document is and who it is from.',
+        },
+        docDate: { type: 'string', description: 'ISO date on the document, if visible.' },
+        amount: { type: 'number', description: 'Total amount on the document, if visible.' },
+      },
+      required: ['kind', 'summary'],
+    },
+  },
+  {
+    name: 'record_kra_assessment',
+    description:
+      'Record a tax assessment or demand from KRA. Call this when she sends a KRA letter, an iTax notice, or tells you KRA says she owes an amount. This starts the objection clock: she has 30 days from the date she was served to lodge a Notice of Objection. Getting this recorded is urgent.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        reference: { type: 'string', description: 'Assessment or notice reference number.' },
+        taxType: {
+          type: 'string',
+          description: 'Turnover tax, VAT, income tax, PAYE, or whatever the notice states.',
+        },
+        assessedAmount: { type: 'number', description: 'What KRA says she owes, in KES.' },
+        assessedSales: {
+          type: 'number',
+          description:
+            'The sales or turnover figure KRA used to reach that amount, if the notice states it. This is what we reconcile against.',
+        },
+        periodFrom: { type: 'string', description: 'ISO date, start of the assessed period.' },
+        periodTo: { type: 'string', description: 'ISO date, end of the assessed period.' },
+        servedDate: {
+          type: 'string',
+          description:
+            'ISO date she was served. This starts the 30 day clock. If she does not know, use today and say you assumed it.',
+        },
+      },
+      required: ['taxType', 'assessedAmount', 'periodFrom', 'periodTo', 'servedDate'],
+    },
+  },
+  {
+    name: 'reconcile_kra',
+    description:
+      'Compare what KRA assessed against what her own ledger shows for the same period. Returns the variance, whether her records can defend it, and what is missing. Call this whenever she asks whether a KRA figure is right, or whether she should object.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        assessedSales: {
+          type: 'number',
+          description: 'The turnover figure KRA used. If the notice only gives tax owed, divide by the rate first.',
+        },
+        periodFrom: { type: 'string', description: 'ISO date.' },
+        periodTo: { type: 'string', description: 'ISO date.' },
+      },
+      required: ['assessedSales', 'periodFrom', 'periodTo'],
+    },
+  },
+  {
+    name: 'build_dispute_pack',
+    description:
+      'Assemble everything needed for a Notice of Objection to KRA: her recorded turnover for the period, the transaction count, supporting documents on file, the variance against the assessment, and the deadline. Call this when she decides to dispute. After calling it, write the objection in plain formal English she can lodge on iTax.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        assessedSales: { type: 'number', description: 'The turnover KRA assessed.' },
+        periodFrom: { type: 'string', description: 'ISO date.' },
+        periodTo: { type: 'string', description: 'ISO date.' },
+        grounds: {
+          type: 'string',
+          description:
+            'Her reason in her own words for why the assessment is wrong, if she gave one.',
+        },
+      },
+      required: ['assessedSales', 'periodFrom', 'periodTo'],
     },
   },
   {

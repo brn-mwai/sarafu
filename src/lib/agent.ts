@@ -5,6 +5,7 @@ import { SARAFU_SYSTEM_PROMPT, TOOLS } from './agent-tools';
 import { buildSummary } from './summary';
 import { computeTaxPosition } from './tax';
 import { kes, pct } from './format';
+import { addDays, daysUntil, reconcile, OBJECTION_WINDOW_DAYS } from './kra';
 
 const MODEL = 'claude-sonnet-5';
 const MAX_TURNS = 6;
@@ -20,6 +21,7 @@ async function runTool(
   name: string,
   input: any,
   today: Date,
+  currentFileId?: string,
 ): Promise<ToolResult> {
   if (name === 'parse_statement') {
     const { inserted } = await convex.mutation(api.ledger.addTransactions, {
@@ -156,6 +158,113 @@ async function runTool(
     };
   }
 
+  if (name === 'save_document') {
+    const { documentId } = await convex.mutation(api.kra.saveDocument, {
+      chatId,
+      kind: input.kind,
+      telegramFileId: currentFileId ?? 'unknown',
+      summary: input.summary,
+      docDate: input.docDate,
+      amount: input.amount,
+    });
+    return {
+      filed: input.kind,
+      documentId,
+      note: 'This is now on file as evidence. It counts if KRA ever assesses her for this period.',
+    };
+  }
+
+  if (name === 'record_kra_assessment') {
+    const deadline = addDays(input.servedDate, OBJECTION_WINDOW_DAYS);
+    const left = daysUntil(deadline, today);
+
+    await convex.mutation(api.kra.recordAssessment, {
+      chatId,
+      reference: input.reference,
+      taxType: input.taxType,
+      assessedAmount: input.assessedAmount,
+      periodFrom: input.periodFrom,
+      periodTo: input.periodTo,
+      servedDate: input.servedDate,
+      objectionDeadline: deadline,
+    });
+
+    return {
+      recorded: `${input.taxType} assessment of ${kes(input.assessedAmount)}`,
+      period: `${input.periodFrom} to ${input.periodTo}`,
+      objectionDeadline: deadline,
+      daysLeftToObject: left,
+      urgent: left <= 10,
+      rule: 'A Notice of Objection must reach the Commissioner within 30 days of being served, under section 51 of the Tax Procedures Act. Late objections need good cause, and not knowing the deadline does not count.',
+      instruction:
+        left <= 0
+          ? 'The 30 day window has passed. Tell her plainly and say a late objection needs good cause.'
+          : 'Lead with the number of days she has left. Then offer to check the figure against her records.',
+    };
+  }
+
+  if (name === 'reconcile_kra' || name === 'build_dispute_pack') {
+    const from: string = input.periodFrom;
+    const to: string = input.periodTo;
+
+    const inPeriod = ledger.transactions.filter((t) => t.date >= from && t.date <= to);
+    const cashInPeriod = ledger.cashDays.filter((c) => c.date >= from && c.date <= to);
+
+    const ledgerSales =
+      inPeriod.filter((t) => t.direction === 'in' && t.isRevenue).reduce((s, t) => s + t.amount, 0) +
+      cashInPeriod.reduce((s, c) => s + c.amount, 0);
+
+    const spanDays = Math.max(
+      1,
+      Math.round(
+        (new Date(`${to}T00:00:00Z`).getTime() - new Date(`${from}T00:00:00Z`).getTime()) /
+          86_400_000,
+      ) + 1,
+    );
+    const cashDaysMissing = Math.max(0, spanDays - cashInPeriod.length);
+
+    const docs = await convex.query(api.kra.listDocuments, { chatId });
+    const r = reconcile(input.assessedSales, ledgerSales, inPeriod.length, cashDaysMissing);
+
+    const base = {
+      period: `${from} to ${to}`,
+      kraSaysTurnoverWas: kes(r.kraFigure),
+      yourRecordsShow: kes(r.ourFigure),
+      difference: kes(Math.abs(r.variance)),
+      whoIsHigher:
+        r.direction === 'kra_higher'
+          ? 'KRA assessed more than her records show'
+          : r.direction === 'we_higher'
+            ? 'Her records show more than KRA assessed'
+            : 'They match',
+      transactionsOnRecord: r.evidenceLines,
+      supportingDocuments: docs.length,
+      cashDaysMissing: r.cashDaysMissing,
+      recordsAreComplete: r.defensible,
+    };
+
+    if (name === 'reconcile_kra') {
+      return {
+        ...base,
+        advice: r.defensible
+          ? 'Her records are complete for this period, so the variance is defensible. Objecting is reasonable.'
+          : `Her records have ${r.cashDaysMissing} days with no cash figure. KRA will treat gaps as undeclared sales. Tell her to fill those days before objecting, because an incomplete ledger weakens the objection.`,
+        instruction:
+          'Give her the two numbers and the gap in one line each. Then say plainly whether her records can defend an objection.',
+      };
+    }
+
+    return {
+      ...base,
+      groundsGiven: input.grounds ?? null,
+      documentsOnFile: docs.map((d) => `${d.kind}: ${d.summary}`),
+      statutoryBasis:
+        'Section 51 of the Tax Procedures Act. Objection within 30 days of service. The Commissioner must decide within 60 days or the objection is deemed allowed. Appeal to the Tax Appeals Tribunal within 30 days of the objection decision, and undisputed tax must be paid or an arrangement made before appealing.',
+      instruction:
+        'Draft the Notice of Objection. Formal but plain English. State the assessment being objected to, the period, the figure KRA used, the figure her records show, how many transactions and documents support it, and the grounds. End with what she should attach. If her records are incomplete, say so inside the draft rather than hiding it.',
+    };
+  }
+
   if (name === 'get_tax_position') {
     const s = buildSummary(ledger.transactions, ledger.cashDays, 30, today);
     const months = Math.max(1, s.tradingDays / 30);
@@ -180,7 +289,18 @@ async function runTool(
   return { error: `Unknown tool ${name}` };
 }
 
-export async function runAgent(chatId: string, userText: string): Promise<string> {
+export interface Attachment {
+  kind: 'image' | 'pdf';
+  mediaType: string;
+  base64: string;
+  telegramFileId: string;
+}
+
+export async function runAgent(
+  chatId: string,
+  userText: string,
+  attachment?: Attachment,
+): Promise<string> {
   const today = new Date();
 
   const history = await convex.query(api.ledger.getHistory, {
@@ -188,9 +308,31 @@ export async function runAgent(chatId: string, userText: string): Promise<string
     limit: HISTORY_LIMIT,
   });
 
+  const userContent: Anthropic.ContentBlockParam[] = [];
+
+  if (attachment) {
+    if (attachment.kind === 'image') {
+      userContent.push({
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: attachment.mediaType as 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif',
+          data: attachment.base64,
+        },
+      });
+    } else {
+      userContent.push({
+        type: 'document',
+        source: { type: 'base64', media_type: 'application/pdf', data: attachment.base64 },
+      });
+    }
+  }
+
+  userContent.push({ type: 'text', text: userText });
+
   const messages: Anthropic.MessageParam[] = [
     ...history.map((m) => ({ role: m.role, content: m.content }) as Anthropic.MessageParam),
-    { role: 'user', content: userText },
+    { role: 'user', content: userContent },
   ];
 
   await convex.mutation(api.ledger.appendMessage, {
@@ -233,7 +375,13 @@ export async function runAgent(chatId: string, userText: string): Promise<string
     const results: Anthropic.ToolResultBlockParam[] = [];
     for (const call of toolUses) {
       try {
-        const out = await runTool(chatId, call.name, call.input, today);
+        const out = await runTool(
+          chatId,
+          call.name,
+          call.input,
+          today,
+          attachment?.telegramFileId,
+        );
         results.push({
           type: 'tool_result',
           tool_use_id: call.id,

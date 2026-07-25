@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as kra from "../kra.js";
 import type * as ledger from "../ledger.js";
 
 import type {
@@ -17,6 +18,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  kra: typeof kra;
   ledger: typeof ledger;
 }>;
 
