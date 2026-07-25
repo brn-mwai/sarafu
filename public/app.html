@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Sarafu</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#00FF01">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sarafu">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="icon" href="/icon-192.png">
+<style>
+  :root {
+    --green: #00FF01;
+    --ink: #000000;
+    --bg: #FFFFFF;
+    --muted: #6B7280;
+    --line: #E6E8EB;
+    --wash: #F6F7F8;
+    --warn: #FFF4D6;
+    --tab-h: 62px;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    max-width: 520px;
+    margin-inline: auto;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom));
+  }
+
+  /* ---------- header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding: calc(env(safe-area-inset-top) + 12px) 16px 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .mark {
+    width: 30px; height: 30px; border-radius: 7px;
+    background: var(--green);
+    display: grid; place-items: center;
+    font-weight: 800; font-size: 17px; letter-spacing: -0.06em;
+    flex: none;
+  }
+  .wordmark { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
+  .biz { margin-left: auto; font-size: 12px; color: var(--muted); text-align: right; line-height: 1.3; }
+
+  main { flex: 1; padding: 16px; display: none; }
+  main.active { display: block; }
+
+  /* ---------- type ---------- */
+  h2 { font-size: 15px; margin: 22px 0 10px; font-weight: 650; letter-spacing: -0.01em; }
+  h2:first-child { margin-top: 0; }
+  .sub { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 6px 0 18px; }
+  .hero .label { font-size: 12.5px; color: var(--muted); }
+  .hero .figure {
+    font-size: 44px; font-weight: 720; letter-spacing: -0.035em;
+    line-height: 1.05; margin: 4px 0 6px;
+  }
+  .delta { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: var(--green); color: var(--ink); }
+
+  /* ---------- cards ---------- */
+  .card { border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+  .card.wash { background: var(--wash); }
+  .card.warn { background: var(--warn); border-color: #F0DFAF; }
+  .card.ink { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .card.ink .k { color: rgba(255,255,255,.6); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .k { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+  .v { font-size: 22px; font-weight: 680; letter-spacing: -0.025em; margin-top: 3px; }
+  .v.sm { font-size: 17px; }
+
+  .row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .row .grow { flex: 1; min-width: 0; }
+  .row .t { font-size: 14.5px; font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .s { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .amt { font-size: 14.5px; font-weight: 650; white-space: nowrap; }
+  .amt.out { color: var(--muted); }
+
+  .daymark { font-size: 11.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 18px 0 2px; }
+
+  /* ---------- cash prompt ---------- */
+  .prompt { border: 2px solid var(--ink); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
+  .prompt .q { font-size: 17px; font-weight: 650; letter-spacing: -0.015em; }
+  .prompt .hint { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+  .entry { display: flex; gap: 8px; margin-top: 12px; }
+  .entry input {
+    flex: 1; min-width: 0; font: inherit; font-size: 22px; font-weight: 680;
+    padding: 11px 13px; border: 1px solid var(--line); border-radius: 11px;
+    background: var(--wash); color: var(--ink);
+  }
+  .entry input:focus { outline: 2px solid var(--green); outline-offset: -1px; background: #fff; }
+
+  button {
+    font: inherit; font-weight: 650; cursor: pointer;
+    border: 0; border-radius: 11px; padding: 12px 18px;
+    background: var(--green); color: var(--ink);
+  }
+  button:active { transform: scale(.98); }
+  button.ghost { background: transparent; border: 1px solid var(--line); }
+  button.dark { background: var(--ink); color: #fff; }
+  button.wide { width: 100%; }
+
+  /* ---------- chat ---------- */
+  .thread { display: flex; flex-direction: column; gap: 9px; padding-bottom: 8px; }
+  .bub { max-width: 84%; padding: 10px 13px; border-radius: 16px; font-size: 14.5px; line-height: 1.45; white-space: pre-wrap; }
+  .bub.me { align-self: flex-end; background: var(--green); color: var(--ink); border-bottom-right-radius: 5px; }
+  .bub.bot { align-self: flex-start; background: var(--wash); border-bottom-left-radius: 5px; }
+  .bub.doc { align-self: flex-end; background: var(--ink); color: #fff; font-size: 13px; border-bottom-right-radius: 5px; }
+  .chips { display: flex; gap: 7px; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; font-size: 12.5px; font-weight: 550; padding: 8px 13px; border: 1px solid var(--line); border-radius: 999px; background: #fff; cursor: pointer; }
+  .composer { display: flex; gap: 7px; align-items: center; margin-top: 6px; }
+  .composer input { flex: 1; min-width: 0; font: inherit; font-size: 15px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--wash); }
+  .composer input:focus { outline: 2px solid var(--green); outline-offset: -1px; }
+  .icobtn { flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--wash); border: 1px solid var(--line); padding: 0; }
+  .icobtn.send { background: var(--green); border-color: var(--green); }
+  .icobtn svg { width: 19px; height: 19px; stroke: var(--ink); fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---------- tax ---------- */
+  .meter { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; margin-top: 9px; }
+  .meter span { display: block; height: 100%; background: var(--green); }
+  .countdown { font-size: 34px; font-weight: 720; letter-spacing: -0.03em; }
+
+  /* ---------- tabs ---------- */
+  nav {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 520px; z-index: 30;
+    background: rgba(255,255,255,.94);
+    backdrop-filter: saturate(180%) blur(14px);
+    border-top: 1px solid var(--line);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  nav button {
+    background: none; border: 0; border-radius: 0; padding: 9px 0 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    font-size: 10.5px; font-weight: 600; color: var(--muted); letter-spacing: .01em;
+  }
+  nav button svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  nav button[aria-selected="true"] { color: var(--ink); }
+  nav button[aria-selected="true"] svg { stroke: var(--ink); }
+
+  .install {
+    position: fixed; left: 12px; right: 12px; bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 12px);
+    max-width: 496px; margin-inline: auto; z-index: 40;
+    background: var(--ink); color: #fff; border-radius: 14px;
+    padding: 13px 15px; display: none; align-items: center; gap: 12px;
+  }
+  .install.show { display: flex; }
+  .install .txt { flex: 1; font-size: 13px; line-height: 1.35; }
+  .install button { padding: 9px 14px; font-size: 13px; }
+
+  .foot { font-size: 11.5px; color: var(--muted); line-height: 1.5; padding: 18px 0 6px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="mark">S</div>
+  <div class="wordmark">Sarafu</div>
+  <div class="biz">Wanjiku General Store<br>Gikomba</div>
+</header>
+
+<!-- ============ TODAY ============ -->
+<main id="today" class="active">
+  <div class="prompt">
+    <div class="q">Cash today?</div>
+    <div class="hint">One number. Not every sale. Takes ten seconds.</div>
+    <form class="entry" id="cashForm">
+      <input id="cashInput" type="number" inputmode="numeric" placeholder="3,400" aria-label="Cash sales today in KES">
+      <button type="submit">Save</button>
+    </form>
+    <div class="sub" id="cashEcho" style="margin-top:9px"></div>
+  </div>
+
+  <div class="hero">
+    <div class="label">Sales this month</div>
+    <div class="figure" id="mSales">KES 341,880</div>
+    <span class="delta" id="mDelta">+12.4% on last month</span>
+  </div>
+
+  <div class="grid2">
+    <div class="card"><div class="k">Costs</div><div class="v" id="mCosts">KES 244,300</div></div>
+    <div class="card"><div class="k">Profit</div><div class="v" id="mProfit">KES 97,580</div></div>
+    <div class="card"><div class="k">Margin</div><div class="v" id="mMargin">28.5%</div></div>
+    <div class="card"><div class="k">Stock</div><div class="v" id="mStock">KES 198,400</div></div>
+  </div>
+
+  <div class="card warn" id="gapCard">
+    <div class="k">Incomplete</div>
+    <div style="font-size:14px;margin-top:5px;line-height:1.45">
+      <strong id="gapDays">3 days</strong> this month have no cash figure. Profit and tax are incomplete until you fill them.
+    </div>
+    <div class="sub" style="margin-top:6px">Sarafu shows an incomplete number rather than a confident wrong one.</div>
+  </div>
+
+  <h2>Where money went</h2>
+  <div class="card">
+    <div class="row"><div class="grow"><div class="t">Stock purchases</div><div class="s">Mwangi Wholesalers, Bidco, unga suppliers</div></div><div class="amt out">KES 198,400</div></div>
+    <div class="row"><div class="grow"><div class="t">Transport</div><div class="s">Boda deliveries, fare</div></div><div class="amt out">KES 21,600</div></div>
+    <div class="row"><div class="grow"><div class="t">Rent</div><div class="s">Stall, monthly</div></div><div class="amt out">KES 15,000</div></div>
+    <div class="row"><div class="grow"><div class="t">Wages</div><div class="s">Helper</div></div><div class="amt out">KES 7,200</div></div>
+    <div class="row"><div class="grow"><div class="t">M-Pesa charges</div><div class="s">Transaction fees</div></div><div class="amt out">KES 2,100</div></div>
+  </div>
+
+  <div class="foot">Figures cover 1 to 26 June 2026. M-Pesa transactions parsed automatically, cash entered by you.</div>
+</main>
+
+<!-- ============ CHAT ============ -->
+<main id="chat">
+  <div class="thread" id="thread">
+    <div class="bub bot">Karibu. Two ways to use me.
+
+Paste your M-Pesa statement, or just tell me what happened today. You can talk instead of typing.</div>
+    <div class="bub me">Nimenunua unga 4,500. Nimeuza leo 8,200. Nililipa helper 600.</div>
+    <div class="bub bot">Recorded three things:
+
+Unga stock, out 4,500
+Sales, in 8,200
+Helper wages, out 600
+
+You made KES 3,100 today.</div>
+    <div class="bub doc">Photo sent: receipt</div>
+    <div class="bub bot">Filed. Mwangi Wholesalers, KES 12,400, 18 June. That is on record as evidence if KRA ever asks about this period.</div>
+  </div>
+
+  <div class="chips" id="chips">
+    <button class="chip" data-q="how did I do this month?">How did I do this month?</button>
+    <button class="chip" data-q="how much tax do I owe?">How much tax do I owe?</button>
+    <button class="chip" data-q="make me a report for the bank">Report for the bank</button>
+    <button class="chip" data-q="cash today 3400">Cash today 3400</button>
+  </div>
+
+  <form class="composer" id="composer">
+    <button type="button" class="icobtn" id="attachBtn" aria-label="Send a photo or document">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v13"/></svg>
+    </button>
+    <button type="button" class="icobtn" id="micBtn" aria-label="Record a voice note">
+      <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></svg>
+    </button>
+    <input id="msg" placeholder="Andika au ongea..." aria-label="Message Sarafu">
+    <button type="submit" class="icobtn send" aria-label="Send">
+      <svg viewBox="0 0 24 24"><path d="M4 12h15"/><path d="M13 6l6 6-6 6"/></svg>
+    </button>
+  </form>
+</main>
+
+<!-- ============ BOOKS ============ -->
+<main id="books">
+  <div class="grid2" style="margin-bottom:4px">
+    <div class="card"><div class="k">M-Pesa</div><div class="v sm">KES 218,400</div></div>
+    <div class="card"><div class="k">Cash</div><div class="v sm">KES 123,480</div></div>
+  </div>
+
+  <div class="daymark">Today, 26 June</div>
+  <div class="card">
+    <div class="row"><div class="grow"><div class="t">Cash sales</div><div class="s">Entered by you</div></div><div class="amt">+8,200</div></div>
+    <div class="row"><div class="grow"><div class="t">Unga stock</div><div class="s">Stock purchase</div></div><div class="amt out">-4,500</div></div>
+    <div class="row"><div class="grow"><div class="t">Helper</div><div class="s">Wages</div></div><div class="amt out">-600</div></div>
+  </div>
+
+  <div class="daymark">Yesterday, 25 June</div>
+  <div class="card">
+    <div class="row"><div class="grow"><div class="t">JOHN KAMAU</div><div class="s">Sale, M-Pesa</div></div><div class="amt">+2,500</div></div>
+    <div class="row"><div class="grow"><div class="t">GRACE ATIENO</div><div class="s">Sale, M-Pesa</div></div><div class="amt">+1,850</div></div>
+    <div class="row"><div class="grow"><div class="t">Cash sales</div><div class="s">Entered by you</div></div><div class="amt">+6,900</div></div>
+    <div class="row"><div class="grow"><div class="t">MWANGI WHOLESALERS</div><div class="s">Stock purchase</div></div><div class="amt out">-12,400</div></div>
+    <div class="row"><div class="grow"><div class="t">Boda delivery</div><div class="s">Transport</div></div><div class="amt out">-300</div></div>
+  </div>
+
+  <div class="daymark">24 June</div>
+  <div class="card">
+    <div class="row"><div class="grow"><div class="t">PETER OCHIENG</div><div class="s">Sale, M-Pesa</div></div><div class="amt">+4,200</div></div>
+    <div class="row"><div class="grow"><div class="t">Cash sales</div><div class="s">Estimated, not confirmed</div></div><div class="amt">+7,100</div></div>
+    <div class="row"><div class="grow"><div class="t">KPLC TOKENS</div><div class="s">Utilities</div></div><div class="amt out">-1,000</div></div>
+  </div>
+
+  <div class="foot">Top customers this month: John Kamau KES 28,400 over 14 payments. Grace Atieno KES 19,650 over 11 payments.</div>
+</main>
+
+<!-- ============ KRA ============ -->
+<main id="kra">
+  <div class="card ink">
+    <div class="k">Turnover tax due</div>
+    <div class="v" style="font-size:30px">KES 5,128</div>
+    <div style="font-size:12.5px;opacity:.75;margin-top:5px">1.5% of gross sales, due by 20 July 2026</div>
+  </div>
+
+  <div class="card">
+    <div class="k">Filing deadline</div>
+    <div class="countdown">24 days</div>
+    <div class="sub" style="margin-top:4px">Turnover tax is filed monthly by the 20th of the following month.</div>
+  </div>
+
+  <div class="card">
+    <div class="k">Annualised turnover</div>
+    <div class="v">KES 4,102,560</div>
+    <div class="meter"><span style="width:82%"></span></div>
+    <div class="sub" style="margin-top:7px">
+      Inside the KES 1,000,000 to 25,000,000 turnover tax band. You are <strong>KES 897,440</strong> below the KES 5,000,000 line where VAT and eTIMS obligations begin.
+    </div>
+  </div>
+
+  <h2>If KRA assesses you</h2>
+  <div class="card warn">
+    <div style="font-size:14px;line-height:1.5">
+      KRA can now raise its own assessment when a business cannot produce records. A business with no books does not avoid tax. It gets estimated.
+    </div>
+    <div class="sub" style="margin-top:7px">
+      You have <strong>30 days</strong> from being served to lodge a Notice of Objection. The Commissioner must decide within 60 days or the objection is deemed allowed.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="k">Evidence on file</div>
+    <div class="row" style="padding-top:9px"><div class="grow"><div class="t">412 transactions</div><div class="s">1 April to 26 June 2026</div></div></div>
+    <div class="row"><div class="grow"><div class="t">18 receipts and invoices</div><div class="s">Photographed and filed</div></div></div>
+    <div class="row"><div class="grow"><div class="t">3 days missing cash</div><div class="s">KRA reads gaps as undeclared sales</div></div></div>
+  </div>
+
+  <button class="wide dark" id="objectBtn" style="margin-top:6px">Draft a Notice of Objection</button>
+  <div class="sub" style="margin-top:9px">Sarafu prepares the record and the draft. It cannot promise an objection will succeed.</div>
+
+  <div class="foot">Turnover tax figures follow KRA guidance. Objection deadlines follow section 51 of the Tax Procedures Act. This is your working figure, not a filed return.</div>
+</main>
+
+<!-- ============ TABS ============ -->
+<nav id="tabs">
+  <button data-tab="today" aria-selected="true">
+    <svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Today
+  </button>
+  <button data-tab="chat" aria-selected="false">
+    <svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg>Sarafu
+  </button>
+  <button data-tab="books" aria-selected="false">
+    <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16"/><path d="M9 9v11"/></svg>Books
+  </button>
+  <button data-tab="kra" aria-selected="false">
+    <svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg>KRA
+  </button>
+</nav>
+
+<div class="install" id="install">
+  <div class="txt">Install Sarafu on your phone. Works offline.</div>
+  <button id="installBtn">Install</button>
+</div>
+
+<script>
+(function () {
+  var kes = function (n) { return 'KES ' + Math.round(n).toLocaleString('en-KE'); };
+
+  /* ---- tabs ---- */
+  var tabs = document.getElementById('tabs');
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-tab]');
+    if (!b) return;
+    [].forEach.call(tabs.querySelectorAll('button'), function (x) {
+      x.setAttribute('aria-selected', String(x === b));
+    });
+    [].forEach.call(document.querySelectorAll('main'), function (m) {
+      m.classList.toggle('active', m.id === b.dataset.tab);
+    });
+    window.scrollTo(0, 0);
+  });
+
+  /* ---- cash prompt drives the month ---- */
+  var state = { sales: 341880, costs: 244300, gaps: 3 };
+
+  function render() {
+    document.getElementById('mSales').textContent = kes(state.sales);
+    document.getElementById('mCosts').textContent = kes(state.costs);
+    document.getElementById('mProfit').textContent = kes(state.sales - state.costs);
+    document.getElementById('mMargin').textContent =
+      (((state.sales - state.costs) / state.sales) * 100).toFixed(1) + '%';
+    var gap = document.getElementById('gapCard');
+    if (state.gaps > 0) {
+      document.getElementById('gapDays').textContent = state.gaps + (state.gaps === 1 ? ' day' : ' days');
+      gap.style.display = '';
+    } else {
+      gap.style.display = 'none';
+    }
+  }
+
+  document.getElementById('cashForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var input = document.getElementById('cashInput');
+    var v = parseFloat(input.value);
+    if (!v || v <= 0) return;
+    state.sales += v;
+    if (state.gaps > 0) state.gaps -= 1;
+    document.getElementById('cashEcho').textContent =
+      'Recorded ' + kes(v) + ' for today. ' +
+      (state.gaps > 0 ? state.gaps + ' days still missing.' : 'Every day this month is now complete.');
+    input.value = '';
+    input.blur();
+    render();
+  });
+
+  render();
+
+  /* ---- chat ---- */
+  var thread = document.getElementById('thread');
+
+  function bubble(text, who) {
+    var d = document.createElement('div');
+    d.className = 'bub ' + who;
+    d.textContent = text;
+    thread.appendChild(d);
+    d.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+
+  var replies = {
+    'how did i do this month?':
+      'Sales KES 341,880. Costs KES 244,300. You kept KES 97,580, a 28.5% margin.\n\nBest customer is John Kamau at KES 28,400. Biggest cost is stock at KES 198,400.\n\n3 days have no cash figure, so this is slightly understated.',
+    'how much tax do i owe?':
+      'KES 5,128 turnover tax, due 20 July.\n\nThat is 1.5% of your sales. Your annualised turnover is KES 4.1M, inside the KES 1M to 25M band.\n\nYou are KES 897,440 below the KES 5M line where VAT and eTIMS start.',
+    'make me a report for the bank':
+      'Sarafu monthly record, June 2026\nWanjiku General Store, Gikomba\n\nSales KES 341,880 (M-Pesa 218,400, cash 123,480)\nCosts KES 244,300\nProfit KES 97,580, margin 28.5%\nTop customer John Kamau, KES 28,400 over 14 payments\n412 transactions, 18 supporting documents\n\n3 trading days have no cash figure and are excluded.\n\nForward this as it is.',
+    'cash today 3400': 'Recorded KES 3,400 for today. 2 days still missing this month.'
+  };
+
+  function respond(q) {
+    var key = q.trim().toLowerCase();
+    setTimeout(function () {
+      bubble(replies[key] || 'I have that. Ask me how the month is going, what you owe KRA, or send a receipt and I will file it.', 'bot');
+    }, 420);
+  }
+
+  document.getElementById('chips').addEventListener('click', function (e) {
+    var c = e.target.closest('.chip');
+    if (!c) return;
+    bubble(c.dataset.q, 'me');
+    respond(c.dataset.q);
+  });
+
+  document.getElementById('composer').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var i = document.getElementById('msg');
+    if (!i.value.trim()) return;
+    bubble(i.value, 'me');
+    respond(i.value);
+    i.value = '';
+  });
+
+  document.getElementById('attachBtn').addEventListener('click', function () {
+    bubble('Photo sent: receipt', 'doc');
+    setTimeout(function () {
+      bubble('Filed. Mwangi Wholesalers, KES 12,400, 18 June. On record as evidence for this period.', 'bot');
+    }, 500);
+  });
+
+  var recording = false;
+  document.getElementById('micBtn').addEventListener('click', function () {
+    recording = !recording;
+    this.style.background = recording ? 'var(--green)' : 'var(--wash)';
+    if (recording) return;
+    bubble('Voice note, 4 seconds', 'doc');
+    setTimeout(function () {
+      bubble('Heard: "Nimeuza leo elfu nane mia mbili, nimenunua unga elfu nne mia tano."\n\nRecorded sales 8,200 in, unga stock 4,500 out. You made KES 3,700 today.', 'bot');
+    }, 700);
+  });
+
+  document.getElementById('objectBtn').addEventListener('click', function () {
+    [].forEach.call(tabs.querySelectorAll('button'), function (x) {
+      x.setAttribute('aria-selected', String(x.dataset.tab === 'chat'));
+    });
+    [].forEach.call(document.querySelectorAll('main'), function (m) {
+      m.classList.toggle('active', m.id === 'chat');
+    });
+    window.scrollTo(0, 0);
+    bubble('Draft a Notice of Objection', 'me');
+    setTimeout(function () {
+      bubble('NOTICE OF OBJECTION\nSection 51, Tax Procedures Act\n\nTaxpayer: Wanjiku General Store\nPeriod: 1 April to 30 June 2026\n\nKRA assessed turnover of KES 6,400,000.\nMy records show KES 4,102,560.\nDifference: KES 2,297,440.\n\nGrounds: the assessment was raised on an estimate. I hold 412 recorded transactions and 18 supporting documents for this period.\n\nNote: 3 trading days have no cash figure. I have stated this rather than omit it.\n\nAttach: transaction ledger, 18 receipts, M-Pesa statements.\n\nLodge on iTax within 30 days of service. I cannot promise this succeeds.', 'bot');
+    }, 600);
+  });
+
+  /* ---- PWA ---- */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/sw.js').catch(function () {});
+    });
+  }
+
+  var deferred = null;
+  var banner = document.getElementById('install');
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferred = e;
+    banner.classList.add('show');
+  });
+  document.getElementById('installBtn').addEventListener('click', function () {
+    banner.classList.remove('show');
+    if (!deferred) return;
+    deferred.prompt();
+    deferred = null;
+  });
+  window.addEventListener('appinstalled', function () { banner.classList.remove('show'); });
+})();
+</script>
+</body>
+</html>
