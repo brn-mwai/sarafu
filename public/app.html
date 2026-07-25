@@ -14,181 +14,187 @@
 <style>
   :root {
     --green: #00FF01;
-    --ink: #000000;
+    --ink: #0A0A0A;
     --bg: #FFFFFF;
     --muted: #6B7280;
-    --line: #E6E8EB;
-    --wash: #F6F7F8;
-    --warn: #FFF4D6;
-    --tab-h: 62px;
+    --faint: #9CA3AF;
+    --line: #E8EAED;
+    --wash: #F7F8F9;
+    --warn: #FFF6E0;
+    --warn-line: #F0DFAF;
+    --tab-h: 60px;
   }
-
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
   html, body {
     margin: 0; padding: 0;
-    background: var(--bg);
-    color: var(--ink);
+    background: var(--bg); color: var(--ink);
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-variant-numeric: tabular-nums;
     -webkit-font-smoothing: antialiased;
     overscroll-behavior-y: none;
   }
-
   body {
-    max-width: 520px;
-    margin-inline: auto;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
+    max-width: 520px; margin-inline: auto; min-height: 100dvh;
+    display: flex; flex-direction: column;
     padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom));
   }
 
-  /* ---------- header ---------- */
+  svg.ph { width: 22px; height: 22px; fill: currentColor; flex: none; }
+  svg.ph.sm { width: 17px; height: 17px; }
+
   header {
-    position: sticky; top: 0; z-index: 20;
-    background: var(--bg);
+    position: sticky; top: 0; z-index: 20; background: var(--bg);
     border-bottom: 1px solid var(--line);
-    padding: calc(env(safe-area-inset-top) + 12px) 16px 12px;
+    padding: calc(env(safe-area-inset-top) + 11px) 16px 11px;
     display: flex; align-items: center; gap: 10px;
   }
   .mark {
-    width: 30px; height: 30px; border-radius: 7px;
-    background: var(--green);
-    display: grid; place-items: center;
-    font-weight: 800; font-size: 17px; letter-spacing: -0.06em;
-    flex: none;
+    width: 30px; height: 30px; border-radius: 8px; background: var(--green);
+    display: grid; place-items: center; font-weight: 800; font-size: 17px;
+    letter-spacing: -0.06em; flex: none; color: var(--ink);
   }
   .wordmark { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
-  .biz { margin-left: auto; font-size: 12px; color: var(--muted); text-align: right; line-height: 1.3; }
+  .biz { margin-left: auto; font-size: 11.5px; color: var(--muted); text-align: right; line-height: 1.35; }
 
   main { flex: 1; padding: 16px; display: none; }
   main.active { display: block; }
 
-  /* ---------- type ---------- */
-  h2 { font-size: 15px; margin: 22px 0 10px; font-weight: 650; letter-spacing: -0.01em; }
+  h2 { font-size: 14px; margin: 22px 0 9px; font-weight: 650; letter-spacing: -0.005em; display: flex; align-items: center; gap: 7px; }
   h2:first-child { margin-top: 0; }
+  h2 svg { color: var(--faint); }
   .sub { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
 
-  /* ---------- hero ---------- */
-  .hero { padding: 6px 0 18px; }
+  .hero { padding: 4px 0 16px; }
   .hero .label { font-size: 12.5px; color: var(--muted); }
-  .hero .figure {
-    font-size: 44px; font-weight: 720; letter-spacing: -0.035em;
-    line-height: 1.05; margin: 4px 0 6px;
-  }
-  .delta { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: var(--green); color: var(--ink); }
+  .hero .figure { font-size: 42px; font-weight: 720; letter-spacing: -0.035em; line-height: 1.05; margin: 3px 0 7px; }
+  .delta { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 620; padding: 4px 10px; border-radius: 999px; background: var(--green); color: var(--ink); }
 
-  /* ---------- cards ---------- */
   .card { border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
-  .card.wash { background: var(--wash); }
-  .card.warn { background: var(--warn); border-color: #F0DFAF; }
+  .card.warn { background: var(--warn); border-color: var(--warn-line); }
   .card.ink { background: var(--ink); color: #fff; border-color: var(--ink); }
-  .card.ink .k { color: rgba(255,255,255,.6); }
+  .card.ink .k { color: rgba(255,255,255,.55); }
+  .card.tight { padding: 12px 14px; }
 
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .k { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
-  .v { font-size: 22px; font-weight: 680; letter-spacing: -0.025em; margin-top: 3px; }
+  .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .055em; font-weight: 650; }
+  .v { font-size: 21px; font-weight: 680; letter-spacing: -0.025em; margin-top: 4px; }
   .v.sm { font-size: 17px; }
 
-  .row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
-  .row:last-child { border-bottom: 0; }
+  .row { display: flex; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+  .row:first-child { padding-top: 2px; }
+  .row:last-child { border-bottom: 0; padding-bottom: 2px; }
   .row .grow { flex: 1; min-width: 0; }
   .row .t { font-size: 14.5px; font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .row .s { font-size: 12px; color: var(--muted); margin-top: 2px; }
   .amt { font-size: 14.5px; font-weight: 650; white-space: nowrap; }
   .amt.out { color: var(--muted); }
+  .pill { width: 30px; height: 30px; border-radius: 9px; background: var(--wash); display: grid; place-items: center; color: var(--muted); flex: none; }
+  .pill.in { background: var(--green); color: var(--ink); }
 
-  .daymark { font-size: 11.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 18px 0 2px; }
+  .daymark { font-size: 11px; font-weight: 700; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; margin: 18px 0 6px; }
 
-  /* ---------- cash prompt ---------- */
-  .prompt { border: 2px solid var(--ink); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
-  .prompt .q { font-size: 17px; font-weight: 650; letter-spacing: -0.015em; }
+  .prompt { border: 2px solid var(--ink); border-radius: 16px; padding: 15px; margin-bottom: 14px; }
+  .prompt .q { font-size: 17px; font-weight: 660; letter-spacing: -0.015em; }
   .prompt .hint { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
   .entry { display: flex; gap: 8px; margin-top: 12px; }
   .entry input {
-    flex: 1; min-width: 0; font: inherit; font-size: 22px; font-weight: 680;
+    flex: 1; min-width: 0; font: inherit; font-size: 21px; font-weight: 680;
     padding: 11px 13px; border: 1px solid var(--line); border-radius: 11px;
     background: var(--wash); color: var(--ink);
   }
   .entry input:focus { outline: 2px solid var(--green); outline-offset: -1px; background: #fff; }
 
-  button {
-    font: inherit; font-weight: 650; cursor: pointer;
-    border: 0; border-radius: 11px; padding: 12px 18px;
-    background: var(--green); color: var(--ink);
-  }
-  button:active { transform: scale(.98); }
-  button.ghost { background: transparent; border: 1px solid var(--line); }
+  button { font: inherit; font-weight: 650; cursor: pointer; border: 0; border-radius: 11px; padding: 12px 18px; background: var(--green); color: var(--ink); }
+  button:active { transform: scale(.985); }
   button.dark { background: var(--ink); color: #fff; }
-  button.wide { width: 100%; }
+  button.wide { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-  /* ---------- chat ---------- */
-  .thread { display: flex; flex-direction: column; gap: 9px; padding-bottom: 8px; }
-  .bub { max-width: 84%; padding: 10px 13px; border-radius: 16px; font-size: 14.5px; line-height: 1.45; white-space: pre-wrap; }
+  /* chart */
+  .chart { display: flex; align-items: stretch; gap: 3px; height: 116px; margin: 12px 0 6px; }
+  .chart .bar { flex: 1; height: 100%; background: var(--wash); border-radius: 3px; position: relative; }
+  .chart .bar i { position: absolute; inset: auto 0 0 0; background: var(--green); border-radius: 3px 3px 0 0; display: block; }
+  .chart .bar.gap i { background: repeating-linear-gradient(45deg, #E3E5E8, #E3E5E8 3px, #F7F8F9 3px, #F7F8F9 6px); }
+  .axis { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--faint); font-weight: 600; }
+
+  .barline { height: 7px; border-radius: 999px; background: var(--line); overflow: hidden; margin-top: 7px; }
+  .barline span { display: block; height: 100%; background: var(--ink); }
+  .meter { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; margin-top: 9px; }
+  .meter span { display: block; height: 100%; background: var(--green); }
+  .countdown { font-size: 32px; font-weight: 720; letter-spacing: -0.03em; }
+
+  /* chat */
+  .thread { display: flex; flex-direction: column; gap: 9px; padding-bottom: 6px; }
+  .bub { max-width: 85%; padding: 10px 13px; border-radius: 16px; font-size: 14.5px; line-height: 1.45; white-space: pre-wrap; }
   .bub.me { align-self: flex-end; background: var(--green); color: var(--ink); border-bottom-right-radius: 5px; }
   .bub.bot { align-self: flex-start; background: var(--wash); border-bottom-left-radius: 5px; }
-  .bub.doc { align-self: flex-end; background: var(--ink); color: #fff; font-size: 13px; border-bottom-right-radius: 5px; }
+  .bub.doc { align-self: flex-end; background: var(--ink); color: #fff; font-size: 13px; border-bottom-right-radius: 5px; display: flex; align-items: center; gap: 7px; }
   .chips { display: flex; gap: 7px; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
-  .chip { flex: none; font-size: 12.5px; font-weight: 550; padding: 8px 13px; border: 1px solid var(--line); border-radius: 999px; background: #fff; cursor: pointer; }
+  .chip { flex: none; font-size: 12.5px; font-weight: 550; padding: 8px 13px; border: 1px solid var(--line); border-radius: 999px; background: #fff; }
   .composer { display: flex; gap: 7px; align-items: center; margin-top: 6px; }
   .composer input { flex: 1; min-width: 0; font: inherit; font-size: 15px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--wash); }
   .composer input:focus { outline: 2px solid var(--green); outline-offset: -1px; }
-  .icobtn { flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--wash); border: 1px solid var(--line); padding: 0; }
+  .icobtn { flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--wash); border: 1px solid var(--line); padding: 0; color: var(--ink); }
   .icobtn.send { background: var(--green); border-color: var(--green); }
-  .icobtn svg { width: 19px; height: 19px; stroke: var(--ink); fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .icobtn.rec { background: var(--green); border-color: var(--green); }
 
-  /* ---------- tax ---------- */
-  .meter { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; margin-top: 9px; }
-  .meter span { display: block; height: 100%; background: var(--green); }
-  .countdown { font-size: 34px; font-weight: 720; letter-spacing: -0.03em; }
-
-  /* ---------- tabs ---------- */
   nav {
     position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
     width: 100%; max-width: 520px; z-index: 30;
-    background: rgba(255,255,255,.94);
-    backdrop-filter: saturate(180%) blur(14px);
+    background: rgba(255,255,255,.95); backdrop-filter: saturate(180%) blur(14px);
     border-top: 1px solid var(--line);
-    display: grid; grid-template-columns: repeat(4, 1fr);
+    display: grid; grid-template-columns: repeat(5, 1fr);
     padding-bottom: env(safe-area-inset-bottom);
   }
   nav button {
-    background: none; border: 0; border-radius: 0; padding: 9px 0 8px;
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-    font-size: 10.5px; font-weight: 600; color: var(--muted); letter-spacing: .01em;
+    background: none; border: 0; border-radius: 0; padding: 8px 0 7px;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    font-size: 10px; font-weight: 620; color: var(--faint); letter-spacing: .01em;
   }
-  nav button svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
   nav button[aria-selected="true"] { color: var(--ink); }
-  nav button[aria-selected="true"] svg { stroke: var(--ink); }
 
   .install {
     position: fixed; left: 12px; right: 12px; bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 12px);
     max-width: 496px; margin-inline: auto; z-index: 40;
     background: var(--ink); color: #fff; border-radius: 14px;
-    padding: 13px 15px; display: none; align-items: center; gap: 12px;
+    padding: 12px 14px; display: none; align-items: center; gap: 12px;
   }
   .install.show { display: flex; }
   .install .txt { flex: 1; font-size: 13px; line-height: 1.35; }
   .install button { padding: 9px 14px; font-size: 13px; }
-
-  .foot { font-size: 11.5px; color: var(--muted); line-height: 1.5; padding: 18px 0 6px; }
+  .foot { font-size: 11.5px; color: var(--faint); line-height: 1.5; padding: 18px 0 4px; }
 </style>
 </head>
 <body>
 
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-house" viewBox="0 0 256 256"><path d="M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 256 256"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h40a8,8,0,0,1,8,8v40a8,8,0,0,1-16,0V91.31l-58.34,58.35a8,8,0,0,1-11.32,0L96,123.31l-56,56V200H224A8,8,0,0,1,232,208Z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 256 256"><path d="M140,128a12,12,0,1,1-12-12A12,12,0,0,1,140,128ZM84,116a12,12,0,1,0,12,12A12,12,0,0,0,84,116Zm88,0a12,12,0,1,0,12,12A12,12,0,0,0,172,116Zm60,12A104,104,0,0,1,79.12,219.82L45.07,231.17a16,16,0,0,1-20.24-20.24l11.35-34.05A104,104,0,1,1,232,128Zm-16,0A88,88,0,1,0,51.81,172.06a8,8,0,0,1,.66,6.54L40,216,77.4,203.53a7.85,7.85,0,0,1,2.53-.42,8,8,0,0,1,4,1.08A88,88,0,0,0,216,128Z"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 256 256"><path d="M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 256 256"><path d="M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm0,72c0,37.07-13.66,67.16-40.6,89.42A129.3,129.3,0,0,1,128,223.62a128.25,128.25,0,0,1-38.92-21.81C61.82,179.51,48,149.3,48,112l0-56,160,0ZM82.34,141.66a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32l-56,56a8,8,0,0,1-11.32,0Z"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 256 256"><path d="M209.66,122.34a8,8,0,0,1,0,11.32l-82.05,82a56,56,0,0,1-79.2-79.21L147.67,35.73a40,40,0,1,1,56.61,56.55L105,193A24,24,0,1,1,71,159L154.3,74.38A8,8,0,1,1,165.7,85.6L82.39,170.31a8,8,0,1,0,11.27,11.36L192.93,81A24,24,0,1,0,159,47L59.76,147.68a40,40,0,1,0,56.53,56.62l82.06-82A8,8,0,0,1,209.66,122.34Z"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 256 256"><path d="M128,176a48.05,48.05,0,0,0,48-48V64a48,48,0,0,0-96,0v64A48.05,48.05,0,0,0,128,176ZM96,64a32,32,0,0,1,64,0v64a32,32,0,0,1-64,0Zm40,143.6V240a8,8,0,0,1-16,0V207.6A80.11,80.11,0,0,1,48,128a8,8,0,0,1,16,0,64,64,0,0,0,128,0,8,8,0,0,1,16,0A80.11,80.11,0,0,1,136,207.6Z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 256 256"><path d="M231.87,114l-168-95.89A16,16,0,0,0,40.92,37.34L71.55,128,40.92,218.67A16,16,0,0,0,56,240a16.15,16.15,0,0,0,7.93-2.1l167.92-96.05a16,16,0,0,0,.05-27.89ZM56,224a.56.56,0,0,0,0-.12L85.74,136H144a8,8,0,0,0,0-16H85.74L56.06,32.16A.46.46,0,0,0,56,32l168,95.83Z"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 256 256"><path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM222.93,203.8a8.5,8.5,0,0,1-7.48,4.2H40.55a8.5,8.5,0,0,1-7.48-4.2,7.59,7.59,0,0,1,0-7.72L120.52,44.21a8.75,8.75,0,0,1,15,0l87.45,151.87A7.59,7.59,0,0,1,222.93,203.8ZM120,144V104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,180Z"/></symbol>
+  <symbol id="i-coins" viewBox="0 0 256 256"><path d="M184,89.57V84c0-25.08-37.83-44-88-44S8,58.92,8,84v40c0,20.89,26.25,37.49,64,42.46V172c0,25.08,37.83,44,88,44s88-18.92,88-44V132C248,111.3,222.58,94.68,184,89.57ZM232,132c0,13.22-30.79,28-72,28-3.73,0-7.43-.13-11.08-.37C170.49,151.77,184,139,184,124V105.74C213.87,110.19,232,122.27,232,132ZM72,150.25V126.46A183.74,183.74,0,0,0,96,128a183.74,183.74,0,0,0,24-1.54v23.79A163,163,0,0,1,96,152,163,163,0,0,1,72,150.25Zm96-40.32V124c0,8.39-12.41,17.4-32,22.87V123.5C148.91,120.37,159.84,115.71,168,109.93ZM96,56c41.21,0,72,14.78,72,28s-30.79,28-72,28S24,97.22,24,84,54.79,56,96,56ZM24,124V109.93c8.16,5.78,19.09,10.44,32,13.57v23.37C36.41,141.4,24,132.39,24,124Zm64,48v-4.17c2.63.1,5.29.17,8,.17,3.88,0,7.67-.13,11.39-.35A121.92,121.92,0,0,0,120,171.41v23.46C100.41,189.4,88,180.39,88,172Zm48,26.25V174.4a179.48,179.48,0,0,0,24,1.6,183.74,183.74,0,0,0,24-1.54v23.79a165.45,165.45,0,0,1-48,0Zm64-3.38V171.5c12.91-3.13,23.84-7.79,32-13.57V172C232,180.39,219.59,189.4,200,194.87Z"/></symbol>
+  <symbol id="i-store" viewBox="0 0 256 256"><path d="M232,96a7.89,7.89,0,0,0-.3-2.2L217.35,43.6A16.07,16.07,0,0,0,202,32H54A16.07,16.07,0,0,0,38.65,43.6L24.31,93.8A7.89,7.89,0,0,0,24,96h0v16a40,40,0,0,0,16,32v72a8,8,0,0,0,8,8H208a8,8,0,0,0,8-8V144a40,40,0,0,0,16-32V96ZM54,48H202l11.42,40H42.61Zm50,56h48v8a24,24,0,0,1-48,0Zm-16,0v8a24,24,0,0,1-35.12,21.26,7.88,7.88,0,0,0-1.82-1.06A24,24,0,0,1,40,112v-8ZM200,208H56V151.2a40.57,40.57,0,0,0,8,.8,40,40,0,0,0,32-16,40,40,0,0,0,64,0,40,40,0,0,0,32,16,40.57,40.57,0,0,0,8-.8Zm4.93-75.8a8.08,8.08,0,0,0-1.8,1.05A24,24,0,0,1,168,112v-8h48v8A24,24,0,0,1,204.93,132.2Z"/></symbol>
+  <symbol id="i-file" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/></symbol>
+  <symbol id="i-up" viewBox="0 0 256 256"><path d="M240,56v64a8,8,0,0,1-16,0V75.31l-82.34,82.35a8,8,0,0,1-11.32,0L96,123.31,29.66,189.66a8,8,0,0,1-11.32-11.32l72-72a8,8,0,0,1,11.32,0L136,140.69,212.69,64H168a8,8,0,0,1,0-16h64A8,8,0,0,1,240,56Z"/></symbol>
+  <symbol id="i-down" viewBox="0 0 256 256"><path d="M240,128v64a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h44.69L136,107.31l-34.34,34.35a8,8,0,0,1-11.32,0l-72-72A8,8,0,0,1,29.66,58.34L96,124.69l34.34-34.35a8,8,0,0,1,11.32,0L224,172.69V128a8,8,0,0,1,16,0Z"/></symbol>
+</svg>
+
 <header>
   <div class="mark">S</div>
   <div class="wordmark">Sarafu</div>
-  <div class="biz">Wanjiku General Store<br>Gikomba</div>
+  <div class="biz">Wanjiku General Store<br>Gikomba, Nairobi</div>
 </header>
 
-<!-- ============ TODAY ============ -->
-<main id="today" class="active">
+<!-- HOME -->
+<main id="home" class="active">
   <div class="prompt">
     <div class="q">Cash today?</div>
-    <div class="hint">One number. Not every sale. Takes ten seconds.</div>
+    <div class="hint">One number. Not every sale. Ten seconds.</div>
     <form class="entry" id="cashForm">
       <input id="cashInput" type="number" inputmode="numeric" placeholder="3,400" aria-label="Cash sales today in KES">
       <button type="submit">Save</button>
@@ -198,38 +204,57 @@
 
   <div class="hero">
     <div class="label">Sales this month</div>
-    <div class="figure" id="mSales">KES 341,880</div>
-    <span class="delta" id="mDelta">+12.4% on last month</span>
+    <div class="figure" id="hSales">&nbsp;</div>
+    <span class="delta"><svg class="ph sm"><use href="#i-up"/></svg><span id="hDelta"></span></span>
   </div>
 
   <div class="grid2">
-    <div class="card"><div class="k">Costs</div><div class="v" id="mCosts">KES 244,300</div></div>
-    <div class="card"><div class="k">Profit</div><div class="v" id="mProfit">KES 97,580</div></div>
-    <div class="card"><div class="k">Margin</div><div class="v" id="mMargin">28.5%</div></div>
-    <div class="card"><div class="k">Stock</div><div class="v" id="mStock">KES 198,400</div></div>
+    <div class="card tight"><div class="k">Costs</div><div class="v sm" id="hCosts"></div></div>
+    <div class="card tight"><div class="k">Profit</div><div class="v sm" id="hProfit"></div></div>
+    <div class="card tight"><div class="k">Margin</div><div class="v sm" id="hMargin"></div></div>
+    <div class="card tight"><div class="k">Tax due</div><div class="v sm" id="hTax"></div></div>
   </div>
 
   <div class="card warn" id="gapCard">
-    <div class="k">Incomplete</div>
-    <div style="font-size:14px;margin-top:5px;line-height:1.45">
-      <strong id="gapDays">3 days</strong> this month have no cash figure. Profit and tax are incomplete until you fill them.
+    <div class="k" style="display:flex;align-items:center;gap:6px"><svg class="ph sm"><use href="#i-warn"/></svg>Incomplete</div>
+    <div style="font-size:14px;margin-top:6px;line-height:1.45">
+      <strong id="gapDays"></strong> this month have no cash figure. Profit and tax are incomplete until you fill them.
     </div>
     <div class="sub" style="margin-top:6px">Sarafu shows an incomplete number rather than a confident wrong one.</div>
   </div>
 
-  <h2>Where money went</h2>
-  <div class="card">
-    <div class="row"><div class="grow"><div class="t">Stock purchases</div><div class="s">Mwangi Wholesalers, Bidco, unga suppliers</div></div><div class="amt out">KES 198,400</div></div>
-    <div class="row"><div class="grow"><div class="t">Transport</div><div class="s">Boda deliveries, fare</div></div><div class="amt out">KES 21,600</div></div>
-    <div class="row"><div class="grow"><div class="t">Rent</div><div class="s">Stall, monthly</div></div><div class="amt out">KES 15,000</div></div>
-    <div class="row"><div class="grow"><div class="t">Wages</div><div class="s">Helper</div></div><div class="amt out">KES 7,200</div></div>
-    <div class="row"><div class="grow"><div class="t">M-Pesa charges</div><div class="s">Transaction fees</div></div><div class="amt out">KES 2,100</div></div>
-  </div>
+  <h2><svg class="ph sm"><use href="#i-store"/></svg>Today</h2>
+  <div class="card" id="todayRows"></div>
 
-  <div class="foot">Figures cover 1 to 26 June 2026. M-Pesa transactions parsed automatically, cash entered by you.</div>
+  <div class="foot">1 to 26 June 2026. M-Pesa parsed automatically, cash entered by you.</div>
 </main>
 
-<!-- ============ CHAT ============ -->
+<!-- DASHBOARD -->
+<main id="dash">
+  <h2><svg class="ph sm"><use href="#i-chart"/></svg>Sales, last 14 days</h2>
+  <div class="card">
+    <div class="v" id="dTotal"></div>
+    <div class="sub" id="dAvg"></div>
+    <div class="chart" id="chart"></div>
+    <div class="axis"><span id="axFrom"></span><span id="axTo"></span></div>
+    <div class="sub" style="margin-top:8px">Hatched bars are days with no cash figure entered.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card tight"><div class="k">M-Pesa</div><div class="v sm" id="dMpesa"></div></div>
+    <div class="card tight"><div class="k">Cash</div><div class="v sm" id="dCash"></div></div>
+  </div>
+
+  <h2><svg class="ph sm"><use href="#i-coins"/></svg>Top customers</h2>
+  <div class="card" id="dCustomers"></div>
+
+  <h2><svg class="ph sm"><use href="#i-receipt"/></svg>Where money went</h2>
+  <div class="card" id="dCosts"></div>
+
+  <div class="foot">Customers ranked by total paid this month. Costs exclude transfers between your own accounts.</div>
+</main>
+
+<!-- CHAT -->
 <main id="chat">
   <div class="thread" id="thread">
     <div class="bub bot">Karibu. Two ways to use me.
@@ -243,88 +268,54 @@ Sales, in 8,200
 Helper wages, out 600
 
 You made KES 3,100 today.</div>
-    <div class="bub doc">Photo sent: receipt</div>
-    <div class="bub bot">Filed. Mwangi Wholesalers, KES 12,400, 18 June. That is on record as evidence if KRA ever asks about this period.</div>
   </div>
 
   <div class="chips" id="chips">
     <button class="chip" data-q="how did I do this month?">How did I do this month?</button>
     <button class="chip" data-q="how much tax do I owe?">How much tax do I owe?</button>
     <button class="chip" data-q="make me a report for the bank">Report for the bank</button>
-    <button class="chip" data-q="cash today 3400">Cash today 3400</button>
   </div>
 
   <form class="composer" id="composer">
-    <button type="button" class="icobtn" id="attachBtn" aria-label="Send a photo or document">
-      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v13"/></svg>
-    </button>
-    <button type="button" class="icobtn" id="micBtn" aria-label="Record a voice note">
-      <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></svg>
-    </button>
+    <button type="button" class="icobtn" id="attachBtn" aria-label="Send a photo or document"><svg class="ph"><use href="#i-clip"/></svg></button>
+    <button type="button" class="icobtn" id="micBtn" aria-label="Record a voice note"><svg class="ph"><use href="#i-mic"/></svg></button>
     <input id="msg" placeholder="Andika au ongea..." aria-label="Message Sarafu">
-    <button type="submit" class="icobtn send" aria-label="Send">
-      <svg viewBox="0 0 24 24"><path d="M4 12h15"/><path d="M13 6l6 6-6 6"/></svg>
-    </button>
+    <button type="submit" class="icobtn send" aria-label="Send"><svg class="ph"><use href="#i-send"/></svg></button>
   </form>
 </main>
 
-<!-- ============ BOOKS ============ -->
+<!-- BOOKS -->
 <main id="books">
-  <div class="grid2" style="margin-bottom:4px">
-    <div class="card"><div class="k">M-Pesa</div><div class="v sm">KES 218,400</div></div>
-    <div class="card"><div class="k">Cash</div><div class="v sm">KES 123,480</div></div>
+  <div class="grid2" style="margin-bottom:2px">
+    <div class="card tight"><div class="k">Transactions</div><div class="v sm" id="bCount"></div></div>
+    <div class="card tight"><div class="k">Documents</div><div class="v sm">18 filed</div></div>
   </div>
-
-  <div class="daymark">Today, 26 June</div>
-  <div class="card">
-    <div class="row"><div class="grow"><div class="t">Cash sales</div><div class="s">Entered by you</div></div><div class="amt">+8,200</div></div>
-    <div class="row"><div class="grow"><div class="t">Unga stock</div><div class="s">Stock purchase</div></div><div class="amt out">-4,500</div></div>
-    <div class="row"><div class="grow"><div class="t">Helper</div><div class="s">Wages</div></div><div class="amt out">-600</div></div>
-  </div>
-
-  <div class="daymark">Yesterday, 25 June</div>
-  <div class="card">
-    <div class="row"><div class="grow"><div class="t">JOHN KAMAU</div><div class="s">Sale, M-Pesa</div></div><div class="amt">+2,500</div></div>
-    <div class="row"><div class="grow"><div class="t">GRACE ATIENO</div><div class="s">Sale, M-Pesa</div></div><div class="amt">+1,850</div></div>
-    <div class="row"><div class="grow"><div class="t">Cash sales</div><div class="s">Entered by you</div></div><div class="amt">+6,900</div></div>
-    <div class="row"><div class="grow"><div class="t">MWANGI WHOLESALERS</div><div class="s">Stock purchase</div></div><div class="amt out">-12,400</div></div>
-    <div class="row"><div class="grow"><div class="t">Boda delivery</div><div class="s">Transport</div></div><div class="amt out">-300</div></div>
-  </div>
-
-  <div class="daymark">24 June</div>
-  <div class="card">
-    <div class="row"><div class="grow"><div class="t">PETER OCHIENG</div><div class="s">Sale, M-Pesa</div></div><div class="amt">+4,200</div></div>
-    <div class="row"><div class="grow"><div class="t">Cash sales</div><div class="s">Estimated, not confirmed</div></div><div class="amt">+7,100</div></div>
-    <div class="row"><div class="grow"><div class="t">KPLC TOKENS</div><div class="s">Utilities</div></div><div class="amt out">-1,000</div></div>
-  </div>
-
-  <div class="foot">Top customers this month: John Kamau KES 28,400 over 14 payments. Grace Atieno KES 19,650 over 11 payments.</div>
+  <div id="ledger"></div>
+  <div class="foot">Every line is classified. Correct one by telling Sarafu, and it learns your suppliers.</div>
 </main>
 
-<!-- ============ KRA ============ -->
+<!-- KRA -->
 <main id="kra">
   <div class="card ink">
     <div class="k">Turnover tax due</div>
-    <div class="v" style="font-size:30px">KES 5,128</div>
-    <div style="font-size:12.5px;opacity:.75;margin-top:5px">1.5% of gross sales, due by 20 July 2026</div>
+    <div class="v" style="font-size:29px" id="kTax"></div>
+    <div style="font-size:12.5px;opacity:.72;margin-top:5px">1.5% of gross sales, due 20 July 2026</div>
   </div>
 
   <div class="card">
     <div class="k">Filing deadline</div>
-    <div class="countdown">24 days</div>
-    <div class="sub" style="margin-top:4px">Turnover tax is filed monthly by the 20th of the following month.</div>
+    <div class="countdown" id="kDays"></div>
+    <div class="sub" style="margin-top:3px">Turnover tax is filed monthly by the 20th of the following month.</div>
   </div>
 
   <div class="card">
     <div class="k">Annualised turnover</div>
-    <div class="v">KES 4,102,560</div>
-    <div class="meter"><span style="width:82%"></span></div>
-    <div class="sub" style="margin-top:7px">
-      Inside the KES 1,000,000 to 25,000,000 turnover tax band. You are <strong>KES 897,440</strong> below the KES 5,000,000 line where VAT and eTIMS obligations begin.
-    </div>
+    <div class="v" id="kAnnual"></div>
+    <div class="meter"><span id="kMeter"></span></div>
+    <div class="sub" style="margin-top:7px" id="kBand"></div>
   </div>
 
-  <h2>If KRA assesses you</h2>
+  <h2><svg class="ph sm"><use href="#i-warn"/></svg>If KRA assesses you</h2>
   <div class="card warn">
     <div style="font-size:14px;line-height:1.5">
       KRA can now raise its own assessment when a business cannot produce records. A business with no books does not avoid tax. It gets estimated.
@@ -334,33 +325,20 @@ You made KES 3,100 today.</div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="k">Evidence on file</div>
-    <div class="row" style="padding-top:9px"><div class="grow"><div class="t">412 transactions</div><div class="s">1 April to 26 June 2026</div></div></div>
-    <div class="row"><div class="grow"><div class="t">18 receipts and invoices</div><div class="s">Photographed and filed</div></div></div>
-    <div class="row"><div class="grow"><div class="t">3 days missing cash</div><div class="s">KRA reads gaps as undeclared sales</div></div></div>
-  </div>
+  <h2><svg class="ph sm"><use href="#i-file"/></svg>Evidence on file</h2>
+  <div class="card" id="kEvidence"></div>
 
-  <button class="wide dark" id="objectBtn" style="margin-top:6px">Draft a Notice of Objection</button>
+  <button class="wide dark" id="objectBtn"><svg class="ph sm"><use href="#i-shield"/></svg>Draft a Notice of Objection</button>
   <div class="sub" style="margin-top:9px">Sarafu prepares the record and the draft. It cannot promise an objection will succeed.</div>
-
-  <div class="foot">Turnover tax figures follow KRA guidance. Objection deadlines follow section 51 of the Tax Procedures Act. This is your working figure, not a filed return.</div>
+  <div class="foot">Turnover tax per KRA. Objection deadlines per section 51 of the Tax Procedures Act. Working figure, not a filed return.</div>
 </main>
 
-<!-- ============ TABS ============ -->
 <nav id="tabs">
-  <button data-tab="today" aria-selected="true">
-    <svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Today
-  </button>
-  <button data-tab="chat" aria-selected="false">
-    <svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/></svg>Sarafu
-  </button>
-  <button data-tab="books" aria-selected="false">
-    <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 9h16"/><path d="M9 9v11"/></svg>Books
-  </button>
-  <button data-tab="kra" aria-selected="false">
-    <svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg>KRA
-  </button>
+  <button data-tab="home" aria-selected="true"><svg class="ph"><use href="#i-house"/></svg>Home</button>
+  <button data-tab="dash" aria-selected="false"><svg class="ph"><use href="#i-chart"/></svg>Dashboard</button>
+  <button data-tab="chat" aria-selected="false"><svg class="ph"><use href="#i-chat"/></svg>Sarafu</button>
+  <button data-tab="books" aria-selected="false"><svg class="ph"><use href="#i-receipt"/></svg>Books</button>
+  <button data-tab="kra" aria-selected="false"><svg class="ph"><use href="#i-shield"/></svg>KRA</button>
 </nav>
 
 <div class="install" id="install">
@@ -371,151 +349,256 @@ You made KES 3,100 today.</div>
 <script>
 (function () {
   var kes = function (n) { return 'KES ' + Math.round(n).toLocaleString('en-KE'); };
+  var short = function (n) { return Math.round(n).toLocaleString('en-KE'); };
 
-  /* ---- tabs ---- */
-  var tabs = document.getElementById('tabs');
-  tabs.addEventListener('click', function (e) {
-    var b = e.target.closest('button[data-tab]');
-    if (!b) return;
-    [].forEach.call(tabs.querySelectorAll('button'), function (x) {
-      x.setAttribute('aria-selected', String(x === b));
-    });
-    [].forEach.call(document.querySelectorAll('main'), function (m) {
-      m.classList.toggle('active', m.id === b.dataset.tab);
-    });
-    window.scrollTo(0, 0);
+  var CUSTOMERS = ['JOHN KAMAU','GRACE ATIENO','PETER OCHIENG','MARY WAIRIMU','SAMUEL KIPROP','ESTHER NJERI'];
+  var SUPPLIERS = [
+    { name: 'MWANGI WHOLESALERS', cat: 'stock_purchase', label: 'Stock purchase' },
+    { name: 'BIDCO DISTRIBUTOR', cat: 'stock_purchase', label: 'Stock purchase' },
+    { name: 'UNGA SUPPLIER', cat: 'stock_purchase', label: 'Stock purchase' }
+  ];
+
+  /* deterministic seed so the demo never shifts */
+  var SEED = [
+    [4,6400,4900],[5,5200,3800],[6,7800,6100],[7,4600,3400],[8,6100,4700],
+    [9,7400,5800],[10,5300,0],[11,6800,4400],[12,8100,6600],[13,5100,3900],
+    [14,6300,5200],[15,7100,0],[16,4800,3600],[17,6600,5300],[18,7600,6200],
+    [19,5000,4100],[20,6900,5500],[21,8300,6900],[22,5600,0],[23,6400,4800],
+    [24,5900,4300],[25,7200,5900],[26,6100,4700]
+  ];
+
+  var txns = [], cashDays = {};
+  SEED.forEach(function (row, i) {
+    var day = row[0], mpesa = row[1], cash = row[2];
+    var date = '2026-06-' + String(day).padStart(2, '0');
+    var n = 2 + (i % 3);
+    var each = Math.round(mpesa / n / 50) * 50;
+    for (var j = 0; j < n; j++) {
+      txns.push({ date: date, who: CUSTOMERS[(i + j) % CUSTOMERS.length], cat: 'sale', label: 'Sale, M-Pesa', dir: 'in', amt: j === n - 1 ? mpesa - each * (n - 1) : each, rev: true });
+    }
+    if (cash > 0) cashDays[date] = cash;
+    if (i % 3 === 0) { var s = SUPPLIERS[i % 3]; txns.push({ date: date, who: s.name, cat: s.cat, label: s.label, dir: 'out', amt: Math.round((mpesa + cash) * 1.95 / 100) * 100, rev: false }); }
+    if (i % 4 === 1) txns.push({ date: date, who: 'BODA DELIVERY', cat: 'transport', label: 'Transport', dir: 'out', amt: 300 + (i % 3) * 150, rev: false });
+    if (i % 6 === 2) txns.push({ date: date, who: 'KPLC TOKENS', cat: 'utilities', label: 'Utilities', dir: 'out', amt: 1000, rev: false });
+    if (day === 5) txns.push({ date: date, who: 'STALL RENT', cat: 'rent', label: 'Rent', dir: 'out', amt: 15000, rev: false });
+    if (i % 7 === 3) txns.push({ date: date, who: 'HELPER', cat: 'wages', label: 'Wages', dir: 'out', amt: 600, rev: false });
+    if (i % 5 === 4) txns.push({ date: date, who: 'M-PESA CHARGES', cat: 'fees', label: 'Transaction fees', dir: 'out', amt: 120 + (i % 4) * 30, rev: false });
   });
 
-  /* ---- cash prompt drives the month ---- */
-  var state = { sales: 341880, costs: 244300, gaps: 3 };
+  var CAT_LABEL = { stock_purchase: 'Stock purchases', transport: 'Transport', rent: 'Rent', utilities: 'Utilities', wages: 'Wages', fees: 'M-Pesa charges' };
+
+  function derive() {
+    var mpesaSales = 0, cashSales = 0, costs = 0, byCat = {}, byCust = {};
+    txns.forEach(function (t) {
+      if (t.dir === 'in' && t.rev) { mpesaSales += t.amt; byCust[t.who] = (byCust[t.who] || { total: 0, n: 0 }); byCust[t.who].total += t.amt; byCust[t.who].n++; }
+      else if (t.dir === 'out') { costs += t.amt; byCat[t.cat] = (byCat[t.cat] || 0) + t.amt; }
+    });
+    Object.keys(cashDays).forEach(function (d) { cashSales += cashDays[d]; });
+
+    var days = SEED.length;
+    var missing = SEED.filter(function (r) { return !cashDays['2026-06-' + String(r[0]).padStart(2, '0')]; }).length;
+    var sales = mpesaSales + cashSales;
+    var annual = (sales / days) * 365;
+    var tax = annual >= 1000000 && annual <= 25000000 ? sales * 0.015 : 0;
+
+    return {
+      sales: sales, mpesaSales: mpesaSales, cashSales: cashSales, costs: costs,
+      profit: sales - costs, margin: sales ? (sales - costs) / sales : 0,
+      missing: missing, annual: annual, tax: tax, days: days,
+      customers: Object.keys(byCust).map(function (k) { return { name: k, total: byCust[k].total, n: byCust[k].n }; }).sort(function (a, b) { return b.total - a.total; }),
+      costCats: Object.keys(byCat).map(function (k) { return { cat: k, total: byCat[k] }; }).sort(function (a, b) { return b.total - a.total; })
+    };
+  }
+
+  function daySeries() {
+    return SEED.slice(-14).map(function (r) {
+      var date = '2026-06-' + String(r[0]).padStart(2, '0');
+      var m = txns.filter(function (t) { return t.date === date && t.dir === 'in' && t.rev; }).reduce(function (s, t) { return s + t.amt; }, 0);
+      var c = cashDays[date] || 0;
+      return { day: r[0], total: m + c, gap: !cashDays[date] };
+    });
+  }
+
+  function rowHtml(t) {
+    var isIn = t.dir === 'in';
+    return '<div class="row"><div class="pill ' + (isIn ? 'in' : '') + '"><svg class="ph sm"><use href="#' + (isIn ? 'i-up' : 'i-down') + '"/></svg></div>' +
+      '<div class="grow"><div class="t">' + t.who + '</div><div class="s">' + t.label + '</div></div>' +
+      '<div class="amt ' + (isIn ? '' : 'out') + '">' + (isIn ? '+' : '-') + short(t.amt) + '</div></div>';
+  }
 
   function render() {
-    document.getElementById('mSales').textContent = kes(state.sales);
-    document.getElementById('mCosts').textContent = kes(state.costs);
-    document.getElementById('mProfit').textContent = kes(state.sales - state.costs);
-    document.getElementById('mMargin').textContent =
-      (((state.sales - state.costs) / state.sales) * 100).toFixed(1) + '%';
+    var d = derive();
+
+    document.getElementById('hSales').textContent = kes(d.sales);
+    document.getElementById('hDelta').textContent = '12.4% on last month';
+    document.getElementById('hCosts').textContent = kes(d.costs);
+    document.getElementById('hProfit').textContent = kes(d.profit);
+    document.getElementById('hMargin').textContent = (d.margin * 100).toFixed(1) + '%';
+    document.getElementById('hTax').textContent = d.tax ? kes(d.tax) : 'None';
+
     var gap = document.getElementById('gapCard');
-    if (state.gaps > 0) {
-      document.getElementById('gapDays').textContent = state.gaps + (state.gaps === 1 ? ' day' : ' days');
+    if (d.missing > 0) {
+      document.getElementById('gapDays').textContent = d.missing + (d.missing === 1 ? ' day' : ' days');
       gap.style.display = '';
-    } else {
-      gap.style.display = 'none';
+    } else { gap.style.display = 'none'; }
+
+    var today = txns.filter(function (t) { return t.date === '2026-06-26'; });
+    var todayHtml = today.map(rowHtml).join('');
+    if (cashDays['2026-06-26']) {
+      todayHtml = '<div class="row"><div class="pill in"><svg class="ph sm"><use href="#i-up"/></svg></div><div class="grow"><div class="t">Cash sales</div><div class="s">Entered by you</div></div><div class="amt">+' + short(cashDays['2026-06-26']) + '</div></div>' + todayHtml;
     }
+    document.getElementById('todayRows').innerHTML = todayHtml;
+
+    /* dashboard */
+    var series = daySeries();
+    var max = Math.max.apply(null, series.map(function (s) { return s.total; }));
+    document.getElementById('dTotal').textContent = kes(series.reduce(function (s, x) { return s + x.total; }, 0));
+    document.getElementById('dAvg').textContent = 'Averaging ' + kes(series.reduce(function (s, x) { return s + x.total; }, 0) / series.length) + ' a day';
+    document.getElementById('chart').innerHTML = series.map(function (s) {
+      return '<div class="bar' + (s.gap ? ' gap' : '') + '"><i style="height:' + Math.max(4, (s.total / max) * 100) + '%"></i></div>';
+    }).join('');
+    document.getElementById('axFrom').textContent = series[0].day + ' Jun';
+    document.getElementById('axTo').textContent = series[series.length - 1].day + ' Jun';
+    document.getElementById('dMpesa').textContent = kes(d.mpesaSales);
+    document.getElementById('dCash').textContent = kes(d.cashSales);
+
+    document.getElementById('dCustomers').innerHTML = d.customers.slice(0, 5).map(function (c) {
+      return '<div class="row"><div class="grow"><div class="t">' + c.name + '</div><div class="s">' + c.n + ' payments</div>' +
+        '<div class="barline"><span style="width:' + (c.total / d.customers[0].total * 100) + '%"></span></div></div>' +
+        '<div class="amt">' + short(c.total) + '</div></div>';
+    }).join('');
+
+    document.getElementById('dCosts').innerHTML = d.costCats.map(function (c) {
+      return '<div class="row"><div class="grow"><div class="t">' + (CAT_LABEL[c.cat] || c.cat) + '</div>' +
+        '<div class="barline"><span style="width:' + (c.total / d.costCats[0].total * 100) + '%"></span></div></div>' +
+        '<div class="amt out">' + short(c.total) + '</div></div>';
+    }).join('');
+
+    /* books */
+    document.getElementById('bCount').textContent = txns.length + ' lines';
+    var dates = SEED.map(function (r) { return '2026-06-' + String(r[0]).padStart(2, '0'); }).reverse();
+    document.getElementById('ledger').innerHTML = dates.slice(0, 6).map(function (date) {
+      var day = Number(date.slice(-2));
+      var label = day === 26 ? 'Today, 26 June' : day === 25 ? 'Yesterday, 25 June' : day + ' June';
+      var rows = txns.filter(function (t) { return t.date === date; });
+      var html = '';
+      if (cashDays[date]) {
+        html += '<div class="row"><div class="pill in"><svg class="ph sm"><use href="#i-up"/></svg></div><div class="grow"><div class="t">Cash sales</div><div class="s">Entered by you</div></div><div class="amt">+' + short(cashDays[date]) + '</div></div>';
+      } else {
+        html += '<div class="row"><div class="pill"><svg class="ph sm"><use href="#i-warn"/></svg></div><div class="grow"><div class="t">Cash sales</div><div class="s">Not entered, excluded from totals</div></div><div class="amt out">--</div></div>';
+      }
+      html += rows.map(rowHtml).join('');
+      return '<div class="daymark">' + label + '</div><div class="card">' + html + '</div>';
+    }).join('');
+
+    /* kra */
+    document.getElementById('kTax').textContent = d.tax ? kes(d.tax) : 'None due';
+    document.getElementById('kDays').textContent = '24 days';
+    document.getElementById('kAnnual').textContent = kes(d.annual);
+    document.getElementById('kMeter').style.width = Math.min(100, (d.annual / 5000000) * 100) + '%';
+    document.getElementById('kBand').innerHTML = d.annual >= 5000000
+      ? 'Above the KES 5,000,000 line. VAT and eTIMS obligations apply.'
+      : 'Inside the KES 1,000,000 to 25,000,000 turnover tax band. You are <strong>' + kes(5000000 - d.annual) + '</strong> below the KES 5,000,000 line where VAT and eTIMS begin.';
+    document.getElementById('kEvidence').innerHTML =
+      '<div class="row"><div class="grow"><div class="t">' + txns.length + ' transactions</div><div class="s">1 to 26 June 2026</div></div></div>' +
+      '<div class="row"><div class="grow"><div class="t">18 receipts and invoices</div><div class="s">Photographed and filed</div></div></div>' +
+      '<div class="row"><div class="grow"><div class="t">' + d.missing + ' days missing cash</div><div class="s">KRA reads gaps as undeclared sales</div></div></div>';
+
+    return d;
   }
+
+  var tabs = document.getElementById('tabs');
+  function go(id) {
+    [].forEach.call(tabs.querySelectorAll('button'), function (x) { x.setAttribute('aria-selected', String(x.dataset.tab === id)); });
+    [].forEach.call(document.querySelectorAll('main'), function (m) { m.classList.toggle('active', m.id === id); });
+    window.scrollTo(0, 0);
+  }
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-tab]');
+    if (b) go(b.dataset.tab);
+  });
 
   document.getElementById('cashForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var input = document.getElementById('cashInput');
     var v = parseFloat(input.value);
     if (!v || v <= 0) return;
-    state.sales += v;
-    if (state.gaps > 0) state.gaps -= 1;
+    var missingDate = null;
+    SEED.forEach(function (r) { var dt = '2026-06-' + String(r[0]).padStart(2, '0'); if (!missingDate && !cashDays[dt]) missingDate = dt; });
+    cashDays[missingDate || '2026-06-26'] = (cashDays['2026-06-26'] || 0) + v;
+    var d = render();
     document.getElementById('cashEcho').textContent =
-      'Recorded ' + kes(v) + ' for today. ' +
-      (state.gaps > 0 ? state.gaps + ' days still missing.' : 'Every day this month is now complete.');
-    input.value = '';
-    input.blur();
-    render();
+      'Recorded ' + kes(v) + '. ' + (d.missing > 0 ? d.missing + ' days still missing.' : 'Every day this month is now complete.');
+    input.value = ''; input.blur();
   });
 
-  render();
-
-  /* ---- chat ---- */
+  /* chat */
   var thread = document.getElementById('thread');
-
-  function bubble(text, who) {
+  function bubble(text, who, icon) {
     var d = document.createElement('div');
     d.className = 'bub ' + who;
-    d.textContent = text;
+    if (icon) d.innerHTML = '<svg class="ph sm"><use href="#' + icon + '"/></svg><span></span>';
+    if (icon) d.querySelector('span').textContent = text; else d.textContent = text;
     thread.appendChild(d);
     d.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }
-
-  var replies = {
-    'how did i do this month?':
-      'Sales KES 341,880. Costs KES 244,300. You kept KES 97,580, a 28.5% margin.\n\nBest customer is John Kamau at KES 28,400. Biggest cost is stock at KES 198,400.\n\n3 days have no cash figure, so this is slightly understated.',
-    'how much tax do i owe?':
-      'KES 5,128 turnover tax, due 20 July.\n\nThat is 1.5% of your sales. Your annualised turnover is KES 4.1M, inside the KES 1M to 25M band.\n\nYou are KES 897,440 below the KES 5M line where VAT and eTIMS start.',
-    'make me a report for the bank':
-      'Sarafu monthly record, June 2026\nWanjiku General Store, Gikomba\n\nSales KES 341,880 (M-Pesa 218,400, cash 123,480)\nCosts KES 244,300\nProfit KES 97,580, margin 28.5%\nTop customer John Kamau, KES 28,400 over 14 payments\n412 transactions, 18 supporting documents\n\n3 trading days have no cash figure and are excluded.\n\nForward this as it is.',
-    'cash today 3400': 'Recorded KES 3,400 for today. 2 days still missing this month.'
-  };
-
   function respond(q) {
+    var d = derive();
     var key = q.trim().toLowerCase();
-    setTimeout(function () {
-      bubble(replies[key] || 'I have that. Ask me how the month is going, what you owe KRA, or send a receipt and I will file it.', 'bot');
-    }, 420);
+    var out;
+    if (key.indexOf('month') > -1 || key.indexOf('doing') > -1) {
+      out = 'Sales ' + kes(d.sales) + '. Costs ' + kes(d.costs) + '. You kept ' + kes(d.profit) + ', a ' + (d.margin * 100).toFixed(1) + '% margin.\n\nBest customer is ' + d.customers[0].name + ' at ' + kes(d.customers[0].total) + '. Biggest cost is stock at ' + kes(d.costCats[0].total) + '.' + (d.missing ? '\n\n' + d.missing + ' days have no cash figure, so this is understated.' : '');
+    } else if (key.indexOf('tax') > -1 || key.indexOf('kra') > -1) {
+      out = kes(d.tax) + ' turnover tax, due 20 July.\n\nThat is 1.5% of your sales. Annualised turnover ' + kes(d.annual) + ', inside the KES 1M to 25M band.\n\nYou are ' + kes(5000000 - d.annual) + ' below the KES 5M line where VAT and eTIMS start.';
+    } else if (key.indexOf('report') > -1 || key.indexOf('bank') > -1) {
+      out = 'Sarafu monthly record, June 2026\nWanjiku General Store, Gikomba\n\nSales ' + kes(d.sales) + ' (M-Pesa ' + short(d.mpesaSales) + ', cash ' + short(d.cashSales) + ')\nCosts ' + kes(d.costs) + '\nProfit ' + kes(d.profit) + ', margin ' + (d.margin * 100).toFixed(1) + '%\nTop customer ' + d.customers[0].name + ', ' + kes(d.customers[0].total) + '\n' + txns.length + ' transactions, 18 supporting documents\n\n' + (d.missing ? d.missing + ' trading days have no cash figure and are excluded.' : 'All trading days complete.') + '\n\nForward this as it is.';
+    } else {
+      out = 'I have that. Ask how the month is going, what you owe KRA, or send a receipt and I will file it.';
+    }
+    setTimeout(function () { bubble(out, 'bot'); }, 400);
   }
-
   document.getElementById('chips').addEventListener('click', function (e) {
     var c = e.target.closest('.chip');
     if (!c) return;
-    bubble(c.dataset.q, 'me');
-    respond(c.dataset.q);
+    bubble(c.dataset.q, 'me'); respond(c.dataset.q);
   });
-
   document.getElementById('composer').addEventListener('submit', function (e) {
     e.preventDefault();
     var i = document.getElementById('msg');
     if (!i.value.trim()) return;
-    bubble(i.value, 'me');
-    respond(i.value);
-    i.value = '';
+    bubble(i.value, 'me'); respond(i.value); i.value = '';
   });
-
   document.getElementById('attachBtn').addEventListener('click', function () {
-    bubble('Photo sent: receipt', 'doc');
-    setTimeout(function () {
-      bubble('Filed. Mwangi Wholesalers, KES 12,400, 18 June. On record as evidence for this period.', 'bot');
-    }, 500);
+    bubble('Receipt photo', 'doc', 'i-clip');
+    setTimeout(function () { bubble('Filed. Mwangi Wholesalers, KES 12,400, 18 June. On record as evidence for this period.', 'bot'); }, 480);
   });
-
   var recording = false;
   document.getElementById('micBtn').addEventListener('click', function () {
     recording = !recording;
-    this.style.background = recording ? 'var(--green)' : 'var(--wash)';
+    this.classList.toggle('rec', recording);
     if (recording) return;
-    bubble('Voice note, 4 seconds', 'doc');
-    setTimeout(function () {
-      bubble('Heard: "Nimeuza leo elfu nane mia mbili, nimenunua unga elfu nne mia tano."\n\nRecorded sales 8,200 in, unga stock 4,500 out. You made KES 3,700 today.', 'bot');
-    }, 700);
+    bubble('Voice note, 4 seconds', 'doc', 'i-mic');
+    setTimeout(function () { bubble('Heard: "Nimeuza leo elfu nane mia mbili, nimenunua unga elfu nne mia tano."\n\nRecorded sales 8,200 in, unga stock 4,500 out. You made KES 3,700 today.', 'bot'); }, 650);
   });
-
   document.getElementById('objectBtn').addEventListener('click', function () {
-    [].forEach.call(tabs.querySelectorAll('button'), function (x) {
-      x.setAttribute('aria-selected', String(x.dataset.tab === 'chat'));
-    });
-    [].forEach.call(document.querySelectorAll('main'), function (m) {
-      m.classList.toggle('active', m.id === 'chat');
-    });
-    window.scrollTo(0, 0);
+    var d = derive();
+    go('chat');
     bubble('Draft a Notice of Objection', 'me');
     setTimeout(function () {
-      bubble('NOTICE OF OBJECTION\nSection 51, Tax Procedures Act\n\nTaxpayer: Wanjiku General Store\nPeriod: 1 April to 30 June 2026\n\nKRA assessed turnover of KES 6,400,000.\nMy records show KES 4,102,560.\nDifference: KES 2,297,440.\n\nGrounds: the assessment was raised on an estimate. I hold 412 recorded transactions and 18 supporting documents for this period.\n\nNote: 3 trading days have no cash figure. I have stated this rather than omit it.\n\nAttach: transaction ledger, 18 receipts, M-Pesa statements.\n\nLodge on iTax within 30 days of service. I cannot promise this succeeds.', 'bot');
-    }, 600);
+      bubble('NOTICE OF OBJECTION\nSection 51, Tax Procedures Act\n\nTaxpayer: Wanjiku General Store\nPeriod: 1 to 30 June 2026\n\nKRA assessed turnover of KES 6,400,000.\nMy records show ' + kes(d.annual) + ' annualised.\n\nGrounds: the assessment was raised on an estimate. I hold ' + txns.length + ' recorded transactions and 18 supporting documents for this period.\n\nNote: ' + d.missing + ' trading days have no cash figure. I have stated this rather than omit it.\n\nAttach: transaction ledger, 18 receipts, M-Pesa statements.\n\nLodge on iTax within 30 days of service. I cannot promise this succeeds.', 'bot');
+    }, 560);
   });
 
-  /* ---- PWA ---- */
+  render();
+
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js').catch(function () {});
-    });
+    window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () {}); });
   }
-
-  var deferred = null;
-  var banner = document.getElementById('install');
-  window.addEventListener('beforeinstallprompt', function (e) {
-    e.preventDefault();
-    deferred = e;
-    banner.classList.add('show');
-  });
+  var deferred = null, banner = document.getElementById('install');
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; banner.classList.add('show'); });
   document.getElementById('installBtn').addEventListener('click', function () {
     banner.classList.remove('show');
-    if (!deferred) return;
-    deferred.prompt();
-    deferred = null;
+    if (deferred) { deferred.prompt(); deferred = null; }
   });
   window.addEventListener('appinstalled', function () { banner.classList.remove('show'); });
 })();
