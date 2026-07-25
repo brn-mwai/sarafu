@@ -33,17 +33,40 @@ Nobody has ever put those three in one place for her, because every tool that ex
 
 Read those together and the causal chain is not subtle. No records, so no visibility. No visibility, so pricing and stock decisions are guesses. No records, so no lender will underwrite her, which is a large part of a USD 19.3 billion gap. Then the business dies inside three years and gets counted in the 400,000.
 
-### Why the existing tools do not close it
+### The competitor that matters is Safaricom
 
-Kenya has good accounting software. ZYNO Books, Qwan, Zoho Books Kenya edition and Auni all handle M-Pesa in some form. Every one of them is built for the business that is **already formal**: it has a paybill or till, a KRA PIN in active use, often a bookkeeper, and turnover that justifies a subscription and a setup process.
+Not Zoho. **Pochi la Biashara** already gives a micro-trader a separate business wallet on the same M-Pesa line, free, reachable on `*334#` and the SIM toolkit, with mini-statements, Taasi loans and Ziidi savings attached. Over 900,000 active merchants use it, and more than half of them are women. Safaricom also already scores M-Pesa cashflow for credit through M-Shwari, Fuliza and Taasi. They own the data, the rail and the distribution.
+
+Any honest pitch has to answer "why would Safaricom not just do this," so:
+
+**Pochi separates the money. It does not explain the money.** A second wallet gives her a balance. It does not give her a margin. There is no expense side, no categorisation, no cost of goods, no tax position. Knowing KES 84,000 came in tells her nothing about whether she made anything, which is the exact question she cannot answer today.
+
+Three structural reasons the gap persists:
+
+1. **Safaricom sees only what crosses M-Pesa.** Cash is invisible to them by construction, and cash is a large share of informal trade. Their picture cannot be completed from the inside.
+2. **Their incentive is transaction volume, not legibility.** Safaricom monetises payments and lending against float. Making a duka's P&L legible to its owner does not move either number, so it stays a feature request forever.
+3. **The tail is unglamorous.** Categorising a hardware stall's supplier payments is messy, low-ARPU, support-heavy work. It is not where a telco with a 50 million user base spends product cycles.
+
+The honest version: they could. It is in the risk table below.
+
+### Why the accounting tools do not close it either
+
+ZYNO Books, Qwan, Zoho Books Kenya edition and Auni all handle M-Pesa in some form. Every one of them is built for the business that is **already formal**: paybill or till, a KRA PIN in active use, often a bookkeeper, and turnover that justifies a subscription and a setup process.
 
 That is roughly 1.56 million businesses. The other 5.85 million are not underserved by those products. They are **out of scope** for them.
 
-The gap is not better accounting. It is a first ledger for a business that has never had one, with zero integration, zero registration and zero training as preconditions.
+The gap is not better accounting, and it is not another wallet. It is a first ledger for a business that has never had one, covering the cash that Safaricom cannot see, with zero integration and zero registration as preconditions.
 
 ## 2. Who Sarafu is for
 
 The owner-operator doing KES 50,000 to KES 4 million a year. A duka, a salon, a hardware stall, a boda fleet of three, a food kiosk, a small distributor. She runs the business from one phone. She banks on M-Pesa. She takes cash. She has no accountant and no paybill, and if she has a KRA PIN she has probably not thought about turnover tax.
+
+Two numbers, kept separate on purpose:
+
+- **Reach ICP:** the whole informal tail, from KES 50,000 a year upward. Free, permanently. This is the funnel and the dataset.
+- **Paid ICP:** the KES 1M to 25M turnover band, where turnover tax is a legal obligation and a subscription is a rounding error against revenue.
+
+Conflating those two is how this pitch got the pricing wrong the first time. See the business model section.
 
 Explicitly **not** the target for v1: VAT-registered businesses with a finance team. They are already served.
 
@@ -51,7 +74,38 @@ Explicitly **not** the target for v1: VAT-registered businesses with a finance t
 
 Three surfaces, one loop.
 
-**Import.** She pastes her M-Pesa statement as plain text. No PDF password, no API, no Daraja integration, no till number, no bank connection. Claude parses the raw statement into structured transactions and gives every line a business meaning: sale, stock purchase, supplier, transport, rent, utilities, wages, fees. That classification step is the whole product. A statement tells her money moved. A ledger tells her whether she is making money, and only one of those is a business record.
+**Import.** She gets her statement to Sarafu, and Claude turns it into a ledger. No Daraja integration, no till number, no paybill, no bank connection, no KRA credentials. Claude parses the raw statement text into structured transactions and gives every line a business meaning: sale, stock purchase, supplier, transport, rent, utilities, wages, fees.
+
+That classification step is the whole product. A statement tells her money moved. A ledger tells her whether she is making money, and only one of those is a business record.
+
+### The on-ramp is the hard part, and we should say so
+
+The full M-Pesa statement is requested on `*334#` and **arrives by email as a password-protected PDF**. The password is an access code sent by SMS, or on older statements the owner's national ID number. The `*334#` mini-statement is SMS only and covers the last five transactions, which is not a ledger.
+
+So "just paste it" understates the friction, and any judge who has actually pulled a statement knows it. The real on-ramp ladder:
+
+| Stage | Mechanism | Friction |
+| --- | --- | --- |
+| Today, demo | Paste statement text | Low once she has text, but she has to get it out of the PDF |
+| v1 | Forward the statement email to an ingest address, reply with the SMS code to unlock | One forward, one reply. No app, no copy-paste |
+| v2 | In-app request flow that walks the `*334#` steps, then unlocks with the code she pastes | One screen |
+
+Email forwarding is the answer, not pasting. Pasting is what fits in a hackathon. Calling that out is more useful than pretending the PDF does not exist.
+
+### How cash actually gets in
+
+This is the load-bearing risk in the whole business, so it gets a mechanism and not a hand-wave.
+
+An owner who will not keep books will not log every cash sale. That is definitionally true, and any design that asks her to is already dead. So Sarafu never asks for one entry per sale.
+
+**It asks for one number per day.**
+
+1. **One scalar, once a day.** End of day: "Cash today?" She types `3400`. Ten seconds, one field, no categories, no receipts. This is the entire cash UX.
+2. **Then it stops asking.** After roughly two weeks Sarafu knows her cash-to-M-Pesa ratio and her day-of-week shape. The prompt becomes "Yesterday looked like about 3,000 in cash. Right?" and one tap confirms it. Confirmation is easier than recall, and it degrades gracefully when she is busy.
+3. **Skipped days are marked estimated, never invented.** A day she does not answer is shown as an estimate in the dashboard and excluded from the tax figure. Sarafu will show her an incomplete number before it shows her a confident wrong one.
+4. **It works off-app.** The prompt runs over SMS reply and USSD, not only in the web app, because she is on a feature phone a good part of the time.
+
+The bet: transaction-level bookkeeping fails for this segment, and daily-scalar bookkeeping might not. It is falsifiable, it is the first thing to test with real users, and it is cheap to test.
 
 **Dashboard.** Revenue, expenses, gross margin, cash position, top customers, best and worst days. Plus manual cash entry, because a purely M-Pesa view of an informal business is a lie by omission. Cash sales sit in the same ledger as M-Pesa sales and the totals are honest.
 
@@ -92,14 +146,27 @@ Not the parsing. That is a prompt, and a competitor can copy it in a week.
 What compounds:
 
 1. **The classification ground truth.** Every correction an owner makes ("that payment was stock, not transport") is a labelled example. Kenyan counterparty names, till numbers and supplier patterns are a dataset that only accumulates from real usage.
-2. **The cash layer.** Competitors read M-Pesa because M-Pesa has an API. Cash has no API, so it gets ignored, so their picture of an informal business is structurally incomplete. Capturing cash is unglamorous and it is the moat.
+2. **The cash layer.** Everyone reads M-Pesa because M-Pesa has an API. Cash has no API, so it gets ignored, so every competitor's picture of an informal business is structurally incomplete. This holds hardest against Safaricom: they see every shilling that crosses M-Pesa and none that crosses the counter. Capturing cash is unglamorous and it is the moat. It is also the thing most likely to fail, which is why it gets a mechanism above and a row in the risk table.
 3. **The credit position.** A business with 12 months of verified, categorised cashflow in Sarafu is underwritable. That is the entry point into the USD 19.3 billion gap, and it is only reachable by whoever holds the ledger.
 
 ## 7. Business model
 
-- **Free:** statement import, dashboard, cash entry. Land the ledger.
-- **Paid, KES 300 to 500 per month:** tax pack, eTIMS export, multi-month history, stock tracking.
-- **Later:** verified cashflow records as a lending rail, revenue-shared with lenders. The ledger is the asset, the subscription is just how it stays alive until then.
+The first version of this section priced KES 300 to 500 per month at everyone in the target segment. That was wrong, and the arithmetic says so: on a business turning over KES 50,000 a year, KES 400 a month is **9.6% of annual revenue**. Nobody sane pays that for bookkeeping.
+
+It was wrong for a second reason. Turnover tax only applies above KES 1,000,000 of annual turnover. For most of the 5.85 million, there is **no tax obligation at all**, so "tax pack" is not an upgrade trigger, it is an irrelevance.
+
+So the segment splits, and the paid ICP is narrower than the target market on purpose.
+
+| Segment | Turnover | Price | Why they stay |
+| --- | --- | --- | --- |
+| **Below the TOT floor** | Under KES 1M | **Free, permanently** | No tax obligation exists. The pull is a **credit-readiness score**: "you have 4 months of verified records, 6 months makes you loan-eligible." Visibility plus a reason to keep the streak alive. |
+| **The TOT band, the paid ICP** | KES 1M to 25M | **KES 500 / month** | Turnover tax is a legal obligation with a monthly deadline. At KES 1M turnover, KES 6,000 a year is 0.6% of revenue, and at KES 25M it is 0.02%. It buys the tax pack, eTIMS-ready export and multi-month history. |
+| **Approaching VAT** | Near KES 5M | Upsell | The KES 5M line triggers VAT and eTIMS obligations. Warning her before she crosses it is worth real money. |
+| **Later, all segments** | Any | Rev share with lenders | Verified cashflow records as a lending rail. |
+
+Two things this admits. The paid band is **a much smaller slice** than 5.85 million. And that is the design: the free tier is the funnel and the dataset, not the revenue. A business that grows from KES 400,000 to KES 1.2M inside Sarafu converts itself, and it does so holding a ledger nobody else has.
+
+The ledger is the asset. The subscription is how it stays alive until the lending rail is real.
 
 ## 8. Hackathon scope
 
@@ -120,9 +187,11 @@ Deliberately cut, and named so the cut is visible: authentication, multi-user, P
 |---|---|
 | Statement format drift | Model-based parsing tolerates format changes better than a regex parser, but it is not free. Needs an eval set of real statements. |
 | Classification errors | A misfiled transaction becomes a wrong tax figure. Mitigation is a visible, one-tap correction path and never showing a tax number as authoritative without owner review. |
-| Cash entry is manual | If she does not enter cash, the picture is wrong. This is the core retention risk and the core product problem. |
-| Willingness to pay | Informal businesses are price-sensitive. Free tier has to carry the value on its own, with tax as the upgrade trigger. |
-| Incumbents move down-market | Zoho or ZYNO could target the informal segment. They would have to give up the paybill assumption to do it, which is most of their architecture. |
+| Cash entry is manual | The single biggest vulnerability in the business. Mitigation is the one-number-per-day design above, then learned pre-fill so confirming replaces recalling. Unproven until real users touch it, and it is the first thing to test. |
+| Getting the statement out | The full statement is an emailed, password-protected PDF. Email forwarding with an SMS unlock code is the intended path, but it is real onboarding friction and the most likely place a first-time user drops. |
+| Willingness to pay | Solved by narrowing the paid ICP to the KES 1M to 25M turnover band, where KES 500 a month is under 0.6% of revenue. Below the floor the product is free and always will be. |
+| **Safaricom builds it** | The serious one. They own the data, the rail and the distribution, and Pochi la Biashara is already in 900,000+ hands. The defence is cash, which they cannot see, and incentives, which point them at transaction volume instead. It is a defence, not a guarantee. |
+| Incumbents move down-market | Zoho or ZYNO could target the informal segment. They would have to give up the paybill assumption, which is most of their architecture. |
 
 ## 10. Sources
 
