@@ -1,6 +1,14 @@
-const VERSION = 'sarafu-v3';
+const VERSION = 'sarafu-v4';
 const SHELL = '/app.html';
-const ASSETS = ['/app.html', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'];
+const ASSETS = [
+  '/app.html',
+  '/ledger-data.js',
+  '/credit.js',
+  '/manifest.webmanifest',
+  '/icon-192.png',
+  '/icon-512.png',
+];
+const REVALIDATE = /\.(js|css|webmanifest)$/;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -36,6 +44,19 @@ self.addEventListener('fetch', (event) => {
           return res;
         })
         .catch(() => caches.match(SHELL)),
+    );
+    return;
+  }
+
+  if (REVALIDATE.test(url.pathname)) {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(VERSION).then((c) => c.put(req, copy));
+          return res;
+        })
+        .catch(() => caches.match(req)),
     );
     return;
   }

@@ -223,14 +223,6 @@
     <div class="sub" style="margin-top:6px">Sarafu shows an incomplete number rather than a confident wrong one.</div>
   </div>
 
-  <h2><svg class="ph sm"><use href="#i-store"/></svg>Today</h2>
-  <div class="card" id="todayRows"></div>
-
-  <div class="foot">1 to 26 June 2026. M-Pesa parsed automatically, cash entered by you.</div>
-</main>
-
-<!-- DASHBOARD -->
-<main id="dash">
   <h2><svg class="ph sm"><use href="#i-chart"/></svg>Sales, last 14 days</h2>
   <div class="card">
     <div class="v" id="dTotal"></div>
@@ -245,13 +237,49 @@
     <div class="card tight"><div class="k">Cash</div><div class="v sm" id="dCash"></div></div>
   </div>
 
-  <h2><svg class="ph sm"><use href="#i-coins"/></svg>Top customers</h2>
-  <div class="card" id="dCustomers"></div>
+  <h2><svg class="ph sm"><use href="#i-store"/></svg>Today</h2>
+  <div class="card" id="todayRows"></div>
 
-  <h2><svg class="ph sm"><use href="#i-receipt"/></svg>Where money went</h2>
-  <div class="card" id="dCosts"></div>
+  <div class="foot">1 to 26 June 2026. M-Pesa parsed automatically, cash entered by you.</div>
+</main>
 
-  <div class="foot">Customers ranked by total paid this month. Costs exclude transfers between your own accounts.</div>
+<!-- CAPITAL -->
+<main id="capital">
+  <div class="card ink">
+    <div class="k">Sarafu score</div>
+    <div style="display:flex;align-items:baseline;gap:10px;margin-top:5px">
+      <div style="font-size:42px;font-weight:720;letter-spacing:-0.035em" id="cpScore"></div>
+      <div style="font-size:15px;font-weight:650" id="cpBand"></div>
+    </div>
+    <div class="meter" style="background:rgba(255,255,255,.18)"><span id="cpMeter"></span></div>
+    <div style="font-size:12.5px;opacity:.72;margin-top:8px" id="cpBasis"></div>
+  </div>
+
+  <div class="card">
+    <div class="k">You can borrow now</div>
+    <div class="v" id="cpHeadroom"></div>
+    <div class="sub" id="cpHeadroomNote"></div>
+  </div>
+
+  <div class="card warn" id="cpNext">
+    <div class="k" style="display:flex;align-items:center;gap:6px"><svg class="ph sm"><use href="#i-up"/></svg>Next unlock</div>
+    <div style="font-size:14.5px;margin-top:6px;line-height:1.45" id="cpNextText"></div>
+    <div class="sub" style="margin-top:6px" id="cpNextHow"></div>
+  </div>
+
+  <h2><svg class="ph sm"><use href="#i-coins"/></svg>You qualify for</h2>
+  <div id="cpEligible"></div>
+
+  <h2><svg class="ph sm"><use href="#i-up"/></svg>Almost there</h2>
+  <div id="cpClose"></div>
+
+  <h2><svg class="ph sm"><use href="#i-file"/></svg>Not yet</h2>
+  <div id="cpLocked"></div>
+
+  <h2><svg class="ph sm"><use href="#i-chart"/></svg>What builds your score</h2>
+  <div class="card" id="cpParts"></div>
+
+  <div class="foot">Amounts are indicative, based on your recorded turnover and score. Every lender makes its own decision. Sarafu does not lend and is not a credit reference bureau.</div>
 </main>
 
 <!-- CHAT -->
@@ -290,6 +318,14 @@ You made KES 3,100 today.</div>
     <div class="card tight"><div class="k">Transactions</div><div class="v sm" id="bCount"></div></div>
     <div class="card tight"><div class="k">Documents</div><div class="v sm">18 filed</div></div>
   </div>
+
+  <h2><svg class="ph sm"><use href="#i-coins"/></svg>Top customers</h2>
+  <div class="card" id="dCustomers"></div>
+
+  <h2><svg class="ph sm"><use href="#i-receipt"/></svg>Where money went</h2>
+  <div class="card" id="dCosts"></div>
+
+  <h2><svg class="ph sm"><use href="#i-store"/></svg>Ledger</h2>
   <div id="ledger"></div>
   <div class="foot">Every line is classified. Correct one by telling Sarafu, and it learns your suppliers.</div>
 </main>
@@ -335,7 +371,7 @@ You made KES 3,100 today.</div>
 
 <nav id="tabs">
   <button data-tab="home" aria-selected="true"><svg class="ph"><use href="#i-house"/></svg>Home</button>
-  <button data-tab="dash" aria-selected="false"><svg class="ph"><use href="#i-chart"/></svg>Dashboard</button>
+  <button data-tab="capital" aria-selected="false"><svg class="ph"><use href="#i-coins"/></svg>Capital</button>
   <button data-tab="chat" aria-selected="false"><svg class="ph"><use href="#i-chat"/></svg>Sarafu</button>
   <button data-tab="books" aria-selected="false"><svg class="ph"><use href="#i-receipt"/></svg>Books</button>
   <button data-tab="kra" aria-selected="false"><svg class="ph"><use href="#i-shield"/></svg>KRA</button>
@@ -346,84 +382,83 @@ You made KES 3,100 today.</div>
   <button id="installBtn">Install</button>
 </div>
 
+<script src="/ledger-data.js"></script>
+<script src="/credit.js"></script>
 <script>
 (function () {
-  var kes = function (n) { return 'KES ' + Math.round(n).toLocaleString('en-KE'); };
-  var short = function (n) { return Math.round(n).toLocaleString('en-KE'); };
-
-  var CUSTOMERS = ['JOHN KAMAU','GRACE ATIENO','PETER OCHIENG','MARY WAIRIMU','SAMUEL KIPROP','ESTHER NJERI'];
-  var SUPPLIERS = [
-    { name: 'MWANGI WHOLESALERS', cat: 'stock_purchase', label: 'Stock purchase' },
-    { name: 'BIDCO DISTRIBUTOR', cat: 'stock_purchase', label: 'Stock purchase' },
-    { name: 'UNGA SUPPLIER', cat: 'stock_purchase', label: 'Stock purchase' }
-  ];
-
-  /* deterministic seed so the demo never shifts */
-  var SEED = [
-    [4,6400,4900],[5,5200,3800],[6,7800,6100],[7,4600,3400],[8,6100,4700],
-    [9,7400,5800],[10,5300,0],[11,6800,4400],[12,8100,6600],[13,5100,3900],
-    [14,6300,5200],[15,7100,0],[16,4800,3600],[17,6600,5300],[18,7600,6200],
-    [19,5000,4100],[20,6900,5500],[21,8300,6900],[22,5600,0],[23,6400,4800],
-    [24,5900,4300],[25,7200,5900],[26,6100,4700]
-  ];
-
-  var txns = [], cashDays = {};
-  SEED.forEach(function (row, i) {
-    var day = row[0], mpesa = row[1], cash = row[2];
-    var date = '2026-06-' + String(day).padStart(2, '0');
-    var n = 2 + (i % 3);
-    var each = Math.round(mpesa / n / 50) * 50;
-    for (var j = 0; j < n; j++) {
-      txns.push({ date: date, who: CUSTOMERS[(i + j) % CUSTOMERS.length], cat: 'sale', label: 'Sale, M-Pesa', dir: 'in', amt: j === n - 1 ? mpesa - each * (n - 1) : each, rev: true });
-    }
-    if (cash > 0) cashDays[date] = cash;
-    if (i % 3 === 0) { var s = SUPPLIERS[i % 3]; txns.push({ date: date, who: s.name, cat: s.cat, label: s.label, dir: 'out', amt: Math.round((mpesa + cash) * 1.95 / 100) * 100, rev: false }); }
-    if (i % 4 === 1) txns.push({ date: date, who: 'BODA DELIVERY', cat: 'transport', label: 'Transport', dir: 'out', amt: 300 + (i % 3) * 150, rev: false });
-    if (i % 6 === 2) txns.push({ date: date, who: 'KPLC TOKENS', cat: 'utilities', label: 'Utilities', dir: 'out', amt: 1000, rev: false });
-    if (day === 5) txns.push({ date: date, who: 'STALL RENT', cat: 'rent', label: 'Rent', dir: 'out', amt: 15000, rev: false });
-    if (i % 7 === 3) txns.push({ date: date, who: 'HELPER', cat: 'wages', label: 'Wages', dir: 'out', amt: 600, rev: false });
-    if (i % 5 === 4) txns.push({ date: date, who: 'M-PESA CHARGES', cat: 'fees', label: 'Transaction fees', dir: 'out', amt: 120 + (i % 4) * 30, rev: false });
-  });
-
-  var CAT_LABEL = { stock_purchase: 'Stock purchases', transport: 'Transport', rent: 'Rent', utilities: 'Utilities', wages: 'Wages', fees: 'M-Pesa charges' };
-
-  function derive() {
-    var mpesaSales = 0, cashSales = 0, costs = 0, byCat = {}, byCust = {};
-    txns.forEach(function (t) {
-      if (t.dir === 'in' && t.rev) { mpesaSales += t.amt; byCust[t.who] = (byCust[t.who] || { total: 0, n: 0 }); byCust[t.who].total += t.amt; byCust[t.who].n++; }
-      else if (t.dir === 'out') { costs += t.amt; byCat[t.cat] = (byCat[t.cat] || 0) + t.amt; }
-    });
-    Object.keys(cashDays).forEach(function (d) { cashSales += cashDays[d]; });
-
-    var days = SEED.length;
-    var missing = SEED.filter(function (r) { return !cashDays['2026-06-' + String(r[0]).padStart(2, '0')]; }).length;
-    var sales = mpesaSales + cashSales;
-    var annual = (sales / days) * 365;
-    var tax = annual >= 1000000 && annual <= 25000000 ? sales * 0.015 : 0;
-
-    return {
-      sales: sales, mpesaSales: mpesaSales, cashSales: cashSales, costs: costs,
-      profit: sales - costs, margin: sales ? (sales - costs) / sales : 0,
-      missing: missing, annual: annual, tax: tax, days: days,
-      customers: Object.keys(byCust).map(function (k) { return { name: k, total: byCust[k].total, n: byCust[k].n }; }).sort(function (a, b) { return b.total - a.total; }),
-      costCats: Object.keys(byCat).map(function (k) { return { cat: k, total: byCat[k] }; }).sort(function (a, b) { return b.total - a.total; })
-    };
-  }
-
-  function daySeries() {
-    return SEED.slice(-14).map(function (r) {
-      var date = '2026-06-' + String(r[0]).padStart(2, '0');
-      var m = txns.filter(function (t) { return t.date === date && t.dir === 'in' && t.rev; }).reduce(function (s, t) { return s + t.amt; }, 0);
-      var c = cashDays[date] || 0;
-      return { day: r[0], total: m + c, gap: !cashDays[date] };
-    });
-  }
-
+  var kes = SARAFU.kes, short = SARAFU.short;
+  var txns = SARAFU.txns, cashDays = SARAFU.cashDays, SEED = SARAFU.SEED;
+  var CAT_LABEL = SARAFU.CAT_LABEL, derive = SARAFU.derive, daySeries = SARAFU.daySeries;
   function rowHtml(t) {
     var isIn = t.dir === 'in';
     return '<div class="row"><div class="pill ' + (isIn ? 'in' : '') + '"><svg class="ph sm"><use href="#' + (isIn ? 'i-up' : 'i-down') + '"/></svg></div>' +
       '<div class="grow"><div class="t">' + t.who + '</div><div class="s">' + t.label + '</div></div>' +
       '<div class="amt ' + (isIn ? '' : 'out') + '">' + (isIn ? '+' : '-') + short(t.amt) + '</div></div>';
+  }
+
+  function loanCard(r, state) {
+    var p = r.product;
+    var head = '<div class="row" style="border-bottom:0;padding:0"><div class="grow">' +
+      '<div class="t">' + p.name + '</div><div class="s">' + p.lender + ' &middot; ' + p.kind + '</div></div>' +
+      '<div class="amt">' + (state === 'eligible' ? 'up to ' + short(r.amount) : short(p.max)) + '</div></div>';
+
+    var body = '<div class="sub" style="margin-top:8px">' + p.cost + ' &middot; ' + p.term + '</div>';
+
+    if (state === 'eligible') {
+      body += '<div class="sub" style="margin-top:6px">' + p.note + '</div>';
+    } else {
+      body += '<div class="sub" style="margin-top:8px"><strong>Blocked by:</strong> ' +
+        r.blockers.map(function (b) { return b.short; }).join(', ') + '</div>';
+    }
+    return '<div class="card">' + head + body + '</div>';
+  }
+
+  function renderCapital(d) {
+    var m = SARAFU_CREDIT.match(d), a = m.assessment;
+
+    document.getElementById('cpScore').textContent = a.score;
+    document.getElementById('cpBand').textContent = a.band;
+    document.getElementById('cpMeter').style.width = a.score + '%';
+    document.getElementById('cpBasis').textContent =
+      a.monthsOfRecords + ' months of records, ' + Math.round(a.completeness * 100) + '% complete, ' + kes(a.avgMonthly) + ' average month';
+
+    document.getElementById('cpHeadroom').textContent = kes(m.headroom);
+    document.getElementById('cpHeadroomNote').textContent =
+      m.eligible.length + ' product' + (m.eligible.length === 1 ? '' : 's') + ' you qualify for today, across ' +
+      (m.eligible.reduce(function (set, r) { return set.indexOf(r.product.lender) > -1 ? set : set.concat([r.product.lender]); }, []).length) + ' lenders.';
+
+    var next = m.nextUnlock;
+    if (next) {
+      var b = next.blockers[0];
+      document.getElementById('cpNextText').innerHTML =
+        '<strong>' + next.product.name + '</strong> from ' + next.product.lender + ', up to ' + kes(next.product.max) + '.';
+      document.getElementById('cpNextHow').textContent = 'Blocked by ' + next.blockers.map(function (x) { return x.short; }).join(' and ') + '.';
+    } else {
+      document.getElementById('cpNext').style.display = 'none';
+    }
+
+    document.getElementById('cpEligible').innerHTML =
+      m.eligible.length ? m.eligible.map(function (r) { return loanCard(r, 'eligible'); }).join('')
+        : '<div class="card"><div class="sub">Nothing yet. Keep entering cash daily and the first products open within weeks.</div></div>';
+    document.getElementById('cpClose').innerHTML =
+      m.close.length ? m.close.map(function (r) { return loanCard(r, 'close'); }).join('')
+        : '<div class="card"><div class="sub">Nothing close right now.</div></div>';
+    document.getElementById('cpLocked').innerHTML =
+      m.locked.map(function (r) { return loanCard(r, 'locked'); }).join('');
+
+    var PART_LABEL = {
+      depth: ['Length of record', a.monthsOfRecords + ' months', 25],
+      completeness: ['Completeness', Math.round(a.completeness * 100) + '% of days', 25],
+      stability: ['Steady income', 'month to month', 20],
+      growth: ['Growth', 'sales trending', 15],
+      diversity: ['Spread of customers', 'top customer ' + Math.round(a.topShare * 100) + '%', 15]
+    };
+    document.getElementById('cpParts').innerHTML = Object.keys(PART_LABEL).map(function (k) {
+      var L = PART_LABEL[k], got = a.parts[k];
+      return '<div class="row"><div class="grow"><div class="t">' + L[0] + '</div><div class="s">' + L[1] + '</div>' +
+        '<div class="barline"><span style="width:' + (got / L[2] * 100) + '%"></span></div></div>' +
+        '<div class="amt">' + Math.round(got) + '/' + L[2] + '</div></div>';
+    }).join('');
   }
 
   function render() {
@@ -443,11 +478,7 @@ You made KES 3,100 today.</div>
     } else { gap.style.display = 'none'; }
 
     var today = txns.filter(function (t) { return t.date === '2026-06-26'; });
-    var todayHtml = today.map(rowHtml).join('');
-    if (cashDays['2026-06-26']) {
-      todayHtml = '<div class="row"><div class="pill in"><svg class="ph sm"><use href="#i-up"/></svg></div><div class="grow"><div class="t">Cash sales</div><div class="s">Entered by you</div></div><div class="amt">+' + short(cashDays['2026-06-26']) + '</div></div>' + todayHtml;
-    }
-    document.getElementById('todayRows').innerHTML = todayHtml;
+    document.getElementById('todayRows').innerHTML = today.map(rowHtml).join('');
 
     /* dashboard */
     var series = daySeries();
@@ -482,14 +513,14 @@ You made KES 3,100 today.</div>
       var label = day === 26 ? 'Today, 26 June' : day === 25 ? 'Yesterday, 25 June' : day + ' June';
       var rows = txns.filter(function (t) { return t.date === date; });
       var html = '';
-      if (cashDays[date]) {
-        html += '<div class="row"><div class="pill in"><svg class="ph sm"><use href="#i-up"/></svg></div><div class="grow"><div class="t">Cash sales</div><div class="s">Entered by you</div></div><div class="amt">+' + short(cashDays[date]) + '</div></div>';
-      } else {
+      if (!cashDays[date]) {
         html += '<div class="row"><div class="pill"><svg class="ph sm"><use href="#i-warn"/></svg></div><div class="grow"><div class="t">Cash sales</div><div class="s">Not entered, excluded from totals</div></div><div class="amt out">--</div></div>';
       }
       html += rows.map(rowHtml).join('');
       return '<div class="daymark">' + label + '</div><div class="card">' + html + '</div>';
     }).join('');
+
+    renderCapital(d);
 
     /* kra */
     document.getElementById('kTax').textContent = d.tax ? kes(d.tax) : 'None due';
@@ -523,9 +554,7 @@ You made KES 3,100 today.</div>
     var input = document.getElementById('cashInput');
     var v = parseFloat(input.value);
     if (!v || v <= 0) return;
-    var missingDate = null;
-    SEED.forEach(function (r) { var dt = '2026-06-' + String(r[0]).padStart(2, '0'); if (!missingDate && !cashDays[dt]) missingDate = dt; });
-    cashDays[missingDate || '2026-06-26'] = (cashDays['2026-06-26'] || 0) + v;
+    SARAFU.addCash(v);
     var d = render();
     document.getElementById('cashEcho').textContent =
       'Recorded ' + kes(v) + '. ' + (d.missing > 0 ? d.missing + ' days still missing.' : 'Every day this month is now complete.');
