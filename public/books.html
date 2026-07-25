@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Books &middot; Sarafu</title>
+<meta name="theme-color" content="#00FF01">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/shell.css">
+</head>
+<body data-page="books">
+<div class="shell">
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>Books</h1>
+        <div class="sub" id="period"></div>
+      </div>
+      <div class="actions">
+        <button onclick="location.href='/app.html'"><svg class="ph sm"><use href="#i-chat"/></svg>Ask Sarafu</button>
+        
+      </div>
+    </div>
+
+    <section>
+      <div class="kpis">
+        <div class="card"><div class="k">Transactions</div><div class="v" id="bCount"></div><div class="n">classified automatically</div></div>
+        <div class="card"><div class="k">M-Pesa</div><div class="v" id="bMpesa"></div></div>
+        <div class="card"><div class="k">Cash</div><div class="v" id="bCash"></div><div class="n">entered by her</div></div>
+        <div class="card"><div class="k">Documents</div><div class="v">18</div><div class="n">receipts filed</div></div>
+        <div class="card warn"><div class="k">Missing</div><div class="v" id="bGap"></div><div class="n">days with no cash figure</div></div>
+      </div>
+    </section>
+    <section>
+      <h2><svg class="ph sm"><use href="#i-receipt"/></svg>Ledger</h2>
+      <div class="card">
+        <table>
+          <thead><tr><th>Date</th><th>Who</th><th>Classified as</th><th>Source</th><th style="text-align:right">Amount</th></tr></thead>
+          <tbody id="ledgerBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="/shell.js"></script>
+<script src="/ledger-data.js"></script>
+<script src="/credit.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var d = SARAFU.derive(), kes = SARAFU.kes, short = SARAFU.short;
+  var m = SARAFU_CREDIT.match(d), a = m.assessment;
+  var el = function (id) { return document.getElementById(id); };
+  if (el('period')) el('period').textContent = '1 to 26 June 2026  &middot;  8 months of records';
+
+  el('bCount').textContent = SARAFU.txns.length;
+  el('bMpesa').textContent = kes(d.mpesaSales);
+  el('bCash').textContent = kes(d.cashSales);
+  el('bGap').textContent = d.missing;
+  el('ledgerBody').innerHTML = SARAFU.txns.slice().sort(function(x,y){return y.date.localeCompare(x.date);}).slice(0,60).map(function(t){
+    var isIn = t.dir === 'in';
+    return '<tr><td>'+t.date.slice(8)+' Jun</td><td>'+t.who+'</td><td><span class="chipcat">'+(SARAFU.CAT_LABEL[t.cat]||t.label)+'</span></td><td>'+(t.src==='cash'?'Cash':'M-Pesa')+'</td><td class="num '+(isIn?'':'out')+'">'+(isIn?'+':'-')+short(t.amt)+'</td></tr>';
+  }).join('');
+
+});
+</script>
+</body>
+</html>

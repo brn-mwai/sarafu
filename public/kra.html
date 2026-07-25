@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KRA &middot; Sarafu</title>
+<meta name="theme-color" content="#00FF01">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/shell.css">
+</head>
+<body data-page="kra">
+<div class="shell">
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>KRA position</h1>
+        <div class="sub" id="period"></div>
+      </div>
+      <div class="actions">
+        <button onclick="location.href='/app.html'"><svg class="ph sm"><use href="#i-chat"/></svg>Ask Sarafu</button>
+        <button class="dark" id="objectBtn"><svg class="ph sm"><use href="#i-shield"/></svg>Draft an objection</button>
+      </div>
+    </div>
+
+    <section>
+      <div class="cols3">
+        <div class="card ink"><div class="k">Turnover tax due</div><div class="v" id="kTax"></div><div class="n">1.5% of gross sales, due 20 July 2026</div></div>
+        <div class="card"><div class="k">Filing deadline</div><div class="v">24 days</div><div class="n">Filed monthly by the 20th of the following month.</div></div>
+        <div class="card"><div class="k">Annualised turnover</div><div class="v" id="aTurn"></div><div class="meter"><span id="aMeter"></span></div><div class="n" id="aBand" style="margin-top:8px"></div></div>
+      </div>
+    </section>
+    <section>
+      <div class="card warn">
+        <h2><svg class="ph sm"><use href="#i-warn"/></svg>If KRA assesses you</h2>
+        <div style="font-size:14px;line-height:1.55;max-width:76ch">
+          KRA can raise its own assessment when a business cannot produce records. A business with no books does not avoid tax. It gets estimated. A Notice of Objection must reach the Commissioner within <strong>30 days</strong> of service under section 51 of the Tax Procedures Act. The Commissioner must decide within 60 days or the objection is deemed allowed. An appeal to the Tax Appeals Tribunal is within 30 days of that decision, with undisputed tax paid first.
+        </div>
+      </div>
+    </section>
+    <section>
+      <h2><svg class="ph sm"><use href="#i-file"/></svg>Evidence on file</h2>
+      <div class="cols3">
+        <div class="card"><div class="k">Transactions</div><div class="v" id="eTx"></div><div class="n">classified and dated</div></div>
+        <div class="card"><div class="k">Documents</div><div class="v">18</div><div class="n">receipts and invoices</div></div>
+        <div class="card"><div class="k">Gaps</div><div class="v" id="eGap"></div><div class="n">days with no cash figure. KRA reads gaps as undeclared sales.</div></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="/shell.js"></script>
+<script src="/ledger-data.js"></script>
+<script src="/credit.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var d = SARAFU.derive(), kes = SARAFU.kes, short = SARAFU.short;
+  var m = SARAFU_CREDIT.match(d), a = m.assessment;
+  var el = function (id) { return document.getElementById(id); };
+  if (el('period')) el('period').textContent = '1 to 26 June 2026  &middot;  8 months of records';
+
+  el('kTax').textContent = d.tax ? kes(d.tax) : 'None due';
+  el('aTurn').textContent = kes(d.annual);
+  el('aMeter').style.width = Math.min(100, d.annual/5000000*100) + '%';
+  el('aBand').innerHTML = d.annual >= 5000000 ? 'Above the KES 5,000,000 line. VAT and eTIMS obligations apply.' : 'Inside the turnover tax band. <strong>'+kes(5000000-d.annual)+'</strong> below the KES 5,000,000 VAT and eTIMS line.';
+  el('eTx').textContent = SARAFU.txns.length;
+  el('eGap').textContent = d.missing;
+  el('objectBtn').addEventListener('click', function(){ location.href='/app.html'; });
+
+});
+</script>
+</body>
+</html>

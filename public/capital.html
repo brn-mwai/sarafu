@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capital &middot; Sarafu</title>
+<meta name="theme-color" content="#00FF01">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/shell.css">
+</head>
+<body data-page="capital">
+<div class="shell">
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>Capital</h1>
+        <div class="sub" id="period"></div>
+      </div>
+      <div class="actions">
+        <button onclick="location.href='/app.html'"><svg class="ph sm"><use href="#i-chat"/></svg>Ask Sarafu</button>
+        <button class="dark" id="packBtn"><svg class="ph sm"><use href="#i-file"/></svg>Build lender pack</button>
+      </div>
+    </div>
+
+    <section>
+      <div class="cols3">
+        <div class="card ink">
+          <div class="k">Sarafu score</div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin-top:6px">
+            <div style="font-size:40px;font-weight:720;letter-spacing:-0.035em" id="cpScore"></div>
+            <div style="font-size:14px;font-weight:650" id="cpBand"></div>
+          </div>
+          <div class="meter" style="background:rgba(255,255,255,.18)"><span id="cpMeter"></span></div>
+          <div class="n" id="cpBasis" style="margin-top:8px"></div>
+        </div>
+        <div class="card">
+          <div class="k">Borrowing headroom today</div>
+          <div class="v" id="cpHeadroom"></div>
+          <div class="n" id="cpHeadroomNote"></div>
+        </div>
+        <div class="card warn">
+          <div class="k">Next unlock</div>
+          <div style="font-size:14px;margin-top:6px;line-height:1.45" id="cpNextText"></div>
+          <div class="n" id="cpNextHow" style="margin-top:6px"></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2><svg class="ph sm"><use href="#i-coins"/></svg>Lenders and products</h2>
+      <div class="card">
+        <table>
+          <thead><tr><th>Product</th><th>Lender</th><th>Type</th><th>Cost</th><th>Status</th><th style="text-align:right">Indicative</th></tr></thead>
+          <tbody id="loanBody"></tbody>
+        </table>
+        <div class="n" style="margin-top:12px">Amounts are indicative, derived from recorded turnover and score. Every lender decides for itself. Sarafu does not lend and is not a credit reference bureau.</div>
+      </div>
+    </section>
+
+    <section class="cols">
+      <div class="card">
+        <h2><svg class="ph sm"><use href="#i-chart"/></svg>What builds the score</h2>
+        <div id="cpParts"></div>
+      </div>
+      <div class="card">
+        <h2><svg class="ph sm"><use href="#i-up"/></svg>Monthly record</h2>
+        <div class="chart" id="hChart"></div>
+        <div class="axis"><span id="hFrom"></span><span id="hTo"></span></div>
+        <div class="n" style="margin-top:9px">Every complete month raises the score and widens what she can borrow.</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="/shell.js"></script>
+<script src="/ledger-data.js"></script>
+<script src="/credit.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var d = SARAFU.derive(), kes = SARAFU.kes, short = SARAFU.short;
+  var m = SARAFU_CREDIT.match(d), a = m.assessment;
+  var el = function (id) { return document.getElementById(id); };
+  if (el('period')) el('period').textContent = '1 to 26 June 2026  &middot;  8 months of records';
+
+  el('cpScore').textContent = a.score;
+  el('cpBand').textContent = a.band;
+  el('cpMeter').style.width = a.score + '%';
+  el('cpBasis').textContent = a.monthsOfRecords + ' months of records  \u00b7  ' + Math.round(a.completeness*100) + '% complete  \u00b7  ' + kes(a.avgMonthly) + ' average month';
+  el('cpHeadroom').textContent = kes(m.headroom);
+  el('cpHeadroomNote').textContent = m.eligible.length + ' products she qualifies for today';
+  if (m.nextUnlock) {
+    el('cpNextText').innerHTML = '<strong>' + m.nextUnlock.product.name + '</strong> from ' + m.nextUnlock.product.lender + ', up to ' + kes(m.nextUnlock.product.max) + '.';
+    el('cpNextHow').textContent = 'Blocked by ' + m.nextUnlock.blockers.map(function(x){return x.short;}).join(' and ') + '.';
+  }
+  el('loanBody').innerHTML = m.all.slice().sort(function(x,y){ return (y.eligible-x.eligible)||(y.amount-x.amount); }).map(function(r){
+    var s = r.eligible ? '<span class="chipcat" style="background:var(--green);color:var(--ink)">Qualifies</span>'
+      : r.close ? '<span class="chipcat" style="background:var(--warn);color:#7A5B00">Almost: ' + r.blockers.map(function(b){return b.short;}).join(', ') + '</span>'
+      : '<span class="chipcat">' + r.blockers.map(function(b){return b.short;}).join(', ') + '</span>';
+    return '<tr><td><strong>'+r.product.name+'</strong></td><td>'+r.product.lender+'</td><td>'+r.product.kind+'</td><td>'+r.product.cost+'</td><td>'+s+'</td><td class="num">'+(r.eligible?short(r.amount):'--')+'</td></tr>';
+  }).join('');
+  var PL = { depth:['Length of record', a.monthsOfRecords+' months',25], completeness:['Completeness', Math.round(a.completeness*100)+'% of days',25], stability:['Steady income','month to month',20], growth:['Growth','sales trend',15], diversity:['Spread of customers','top customer '+Math.round(a.topShare*100)+'%',15] };
+  el('cpParts').innerHTML = Object.keys(PL).map(function(k){ var L=PL[k], g=a.parts[k];
+    return '<div class="row"><div class="grow"><div class="t">'+L[0]+'</div><div class="s">'+L[1]+'</div><div class="barline"><span style="width:'+(g/L[2]*100)+'%"></span></div></div><div class="amt">'+Math.round(g)+'/'+L[2]+'</div></div>'; }).join('');
+  var mx = Math.max.apply(null, a.months.map(function(x){return x.sales;}));
+  el('hChart').innerHTML = a.months.map(function(x){ return '<div class="bar" title="'+x.label+': '+kes(x.sales)+'"><i style="height:'+(x.sales/mx*100)+'%"></i></div>'; }).join('');
+  el('hFrom').textContent = a.months[0].label;
+  el('hTo').textContent = a.months[a.months.length-1].label;
+  el('packBtn').addEventListener('click', function(){ location.href='/app.html'; });
+
+});
+</script>
+</body>
+</html>

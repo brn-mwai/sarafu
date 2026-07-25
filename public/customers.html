@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customers &middot; Sarafu</title>
+<meta name="theme-color" content="#00FF01">
+<link rel="icon" href="/icon-192.png">
+<link rel="stylesheet" href="/shell.css">
+</head>
+<body data-page="customers">
+<div class="shell">
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>Customers and costs</h1>
+        <div class="sub" id="period"></div>
+      </div>
+      <div class="actions">
+        <button onclick="location.href='/app.html'"><svg class="ph sm"><use href="#i-chat"/></svg>Ask Sarafu</button>
+        
+      </div>
+    </div>
+
+    <section class="cols">
+      <div class="card">
+        <h2><svg class="ph sm"><use href="#i-coins"/></svg>Top customers</h2>
+        <div id="custRows"></div>
+        <div class="n" style="margin-top:12px" id="concNote"></div>
+      </div>
+      <div class="card">
+        <h2><svg class="ph sm"><use href="#i-receipt"/></svg>Where money went</h2>
+        <div id="costRows"></div>
+      </div>
+    </section>
+    <section>
+      <h2><svg class="ph sm"><use href="#i-chart"/></svg>Every paying customer</h2>
+      <div class="card">
+        <table>
+          <thead><tr><th>Customer</th><th>Payments</th><th>Share of sales</th><th style="text-align:right">Total</th></tr></thead>
+          <tbody id="custBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="/shell.js"></script>
+<script src="/ledger-data.js"></script>
+<script src="/credit.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var d = SARAFU.derive(), kes = SARAFU.kes, short = SARAFU.short;
+  var m = SARAFU_CREDIT.match(d), a = m.assessment;
+  var el = function (id) { return document.getElementById(id); };
+  if (el('period')) el('period').textContent = '1 to 26 June 2026  &middot;  8 months of records';
+
+  el('custRows').innerHTML = d.customers.slice(0,6).map(function(c){
+    return '<div class="row"><div class="grow"><div class="t">'+c.name+'</div><div class="s">'+c.n+' payments</div><div class="barline"><span style="width:'+(c.total/d.customers[0].total*100)+'%"></span></div></div><div class="amt">'+short(c.total)+'</div></div>'; }).join('');
+  el('costRows').innerHTML = d.costCats.map(function(c){
+    return '<div class="row"><div class="grow"><div class="t">'+(SARAFU.CAT_LABEL[c.cat]||c.cat)+'</div><div class="barline"><span style="width:'+(c.total/d.costCats[0].total*100)+'%"></span></div></div><div class="amt out">'+short(c.total)+'</div></div>'; }).join('');
+  el('concNote').textContent = 'Top customer is ' + Math.round(a.topShare*100) + '% of sales. Lenders read concentration as risk, so a wide spread raises the score.';
+  el('custBody').innerHTML = d.customers.map(function(c){
+    return '<tr><td><strong>'+c.name+'</strong></td><td>'+c.n+'</td><td>'+(c.total/d.sales*100).toFixed(1)+'%</td><td class="num">'+short(c.total)+'</td></tr>'; }).join('');
+
+});
+</script>
+</body>
+</html>
